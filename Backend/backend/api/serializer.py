@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 # from .models import ToDo
 from rest_framework import serializers
-
+from .models import ToDoList
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
@@ -15,4 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
     )
     return user  
 
-
+class ToDoSerializer(serializers.ModelSerializer):
+  class Meta:
+    model= ToDoList
+    fields = ['id', 'user', 'title' , 'goal' , 'image']
