@@ -40,7 +40,10 @@ class CreateToDoListView(generics.CreateAPIView):
   permission_classes = [IsAuthenticated]
 
   def perform_create(self, serializer):
+    
     serializer.save(user= self.request.user)
+
+# class ListTodoView()
 
 # only authenticated and current user
 class EditToDoListView(generics.RetrieveUpdateDestroyAPIView):
@@ -49,6 +52,7 @@ class EditToDoListView(generics.RetrieveUpdateDestroyAPIView):
   permission_classes = [IsAuthenticated]
 
   def get_queryset(self):
-    queryset= ToDoList.objects.filter(user = self.request.user)
+   
+    queryset= ToDoList.objects.filter(user = self.request.user )
     return queryset
 

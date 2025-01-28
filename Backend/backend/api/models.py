@@ -11,4 +11,4 @@ class ToDoList(models.Model):
   user = models.ForeignKey(User , on_delete=models.CASCADE ,related_name = "todolist" ,null = True)
 
   def __str__(self):
-    return self.title
+    return self.title or f"TodoList {self.id}" or "Untitled TodoList"
