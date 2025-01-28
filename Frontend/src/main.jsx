@@ -7,6 +7,7 @@ import {RouterProvider, createBrowserRouter, createRoutesFromElements , Route, N
 import Login from './Components/Login.jsx'
 import RegisterAndLogout from './Components/RegisterAndLogout.jsx'
 import ProtectedRoute from './Components/ProtectedRoutes.jsx'
+
 import Home from './Components/Home.jsx'
 
 function Logout(){
@@ -26,6 +27,7 @@ const router = createBrowserRouter(
     <Route path="login/" element={<Login />} /> 
     <Route path="logout/" element={<Logout />} /> 
     <Route path="register/" element={<RegisterAndLogout />} />
+    
     
     
     
