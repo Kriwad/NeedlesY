@@ -12,3 +12,4 @@ class ToDoList(models.Model):
 
   def __str__(self):
     return self.title or f"TodoList {self.id}" or "Untitled TodoList"
+

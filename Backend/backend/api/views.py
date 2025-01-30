@@ -43,7 +43,12 @@ class CreateToDoListView(generics.CreateAPIView):
     
     serializer.save(user= self.request.user)
 
-# class ListTodoView()
+class ListTodoView(generics.ListAPIView):
+  serializer_class = ToDoSerializer
+  permission_classes = [IsAuthenticated]
+
+  def get_queryset(self):
+   return ToDoList.objects.all()
 
 # only authenticated and current user
 class EditToDoListView(generics.RetrieveUpdateDestroyAPIView):

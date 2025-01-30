@@ -39,7 +39,7 @@ const Login = ()=> {
 
   return (
     <>
-    <div className="flex items-center justify-center h-screen bg-gray-100 w-screen absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 " >
+    <div className="flex items-center justify-center h-screen bg-gray-100 w-screen " >
 
       <div className="bg-red-200 w-96 p-8 border-2 border-black rounded-lg shadow-lg">
         <h2 className="p-5 text-x underline text-teal-600" >Please Login!</h2>
