@@ -32,7 +32,7 @@ export default function RegisterAndLogout(){
       setSuccess("Registration successful! Please proceed to login.");
       setTimeout(() => navigate("/login"), 2000);
 
-    }catch (err) {
+    }catch (error) {
       
       if (err.response && err.response.data) {
        

@@ -32,6 +32,14 @@ class DetailUserView(generics.RetrieveAPIView):
   def get_queryset(self):
     queryset= User.objects.filter(id = self.request.user.id)
     return queryset
+  
+#fetches current user
+class CurrentUserView(generics.RetrieveAPIView):
+  serializer_class = UserSerializer
+  permission_classes = [IsAuthenticated]
+
+  def get_object(self):
+    return self.request.user
 
 # only authenticated and current user
 class CreateToDoListView(generics.CreateAPIView):
@@ -52,12 +60,10 @@ class ListTodoView(generics.ListAPIView):
 
 # only authenticated and current user
 class EditToDoListView(generics.RetrieveUpdateDestroyAPIView):
-  queryset = ToDoList.objects.all()
+ 
   serializer_class = ToDoSerializer
   permission_classes = [IsAuthenticated]
 
-  def get_queryset(self):
-   
-    queryset= ToDoList.objects.filter(user = self.request.user )
-    return queryset
+  def get_queryset(self):   
+    return ToDoList.objects.filter(user = self.request.user )
 

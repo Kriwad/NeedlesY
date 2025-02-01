@@ -6,83 +6,26 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisV, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import Modal from '../Modals/Modal';
 
+import { formatDistanceToNow, set } from 'date-fns';
 import { ACCESS_TOKEN } from '../constants';
 
-const Modal = ({ 
-  isOpen, 
-  isClosed, 
-  onSubmit, 
-  title: modalTitle, 
-  submitText, 
-  formData, 
-  handleInputChange 
-}) => {
-  if (!isOpen) return null;
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">{modalTitle}</h2>
-          <button
-            onClick={isClosed}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            &times;
-          </button>
-        </div>
-        <form onSubmit={onSubmit}>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Title
-            </label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleInputChange}
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Goals
-            </label>
-            <textarea
-              name="goal"
-              value={formData.goal}
-              onChange={handleInputChange}
-              rows="4"
-              required
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-            ></textarea>
-          </div>
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            >
-              {submitText}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
+
 
 function Home() {
   
   const [ModalOpen ,setModalOpen] = useState(false)
-
+  const [user , setUser] = useState(null)
   const [editModal , setEditModal] = useState(false)
+  const [deleteModal , setDeleteModal] = useState(false)
   const [selectTodo , setSelectTodo] = useState(null)
   const [Search , setSearch] = useState("")
   const [formData, setFormData] = useState({
     title: "",
     goal : ""
   })
+  const [openMenuId, setOpenMenuId] = useState(null)
   const [todos, setTodos] = useState([])
   const navigate = useNavigate()
 
@@ -94,7 +37,14 @@ function Home() {
     setSelectTodo(null)
   }
 
+  const handleOpenUd = (todoId)=> {
+    setOpenMenuId(prevId => prevId === todoId ? null : todoId)
+    
+  }
+  const handleCloseUd = (e)=> {
+    setOpenMenuId(null)
 
+  }
   const handleOpenModal = ()=> {
     resetForm()
     setModalOpen(true);
@@ -105,7 +55,9 @@ function Home() {
   }
 
   const handleEditOpenModal = (todo)=> {
+    
     setEditModal(true);
+    setOpenMenuId(null)
     setSelectTodo(todo);
     setFormData({
       title : todo.title,
@@ -117,6 +69,23 @@ function Home() {
     resetForm()
     setEditModal(false);
   }
+
+  const handleDeleteOpenModal = (todo)=>{
+    setDeleteModal(true)
+    setOpenMenuId(null)
+    setSelectTodo(todo);
+    setFormData({
+      title : todo.title,
+      goal : todo.goal
+    })
+
+  }
+
+  const handleDeleteCloseModal = () => {
+    setDeleteModal(false)
+  }
+    
+
 
   const handleSearch= (e)=> {
     setSearch(e.target.value)
@@ -135,6 +104,7 @@ function Home() {
       [name]: value
     }))
   }
+  
 
   const handleSubmit = async (e)=> {
     e.preventDefault();
@@ -145,8 +115,6 @@ function Home() {
     } catch(error){
         console.log("error")
     } 
-    
-   
   }
 
   const handleEdit= async (e)=>{
@@ -162,9 +130,33 @@ function Home() {
     
   }
 
+  const handleDelete = async (e)=>{
+    if (!selectTodo) return 
+    e.preventDefault()
+    try{
+      await api.delete(`/api/user/todo/edit/${selectTodo.id}/` , formData);
+      await fetchTodos()
+      handleDeleteCloseModal()
+    }catch(error){
+      console.log(error)
+    }
+  }
+
   useEffect(()=> {
     fetchTodos();
+    fetchUser();
   }, [])
+
+  const fetchUser= async (e)=>{
+    try {
+      const user = await api.get("/api/user/current/")
+      setUser(user.data)
+    }catch(error){
+      console.log(error)
+    }
+   
+    
+  }
   
   const fetchTodos= async (e)=> {
     
@@ -174,16 +166,13 @@ function Home() {
     }catch(error){
       console.log("Problem fetching your data:" ,error)
     }
-  }
-
-  
-
- 
-   
+  } 
   return (
     
   <>
+  
     <nav className="flex-1 bg-slate-400 py-4">
+      
       <div className="flex items-center justify-between mx-6 ">
         {/* Left Side: ToDoList Text */}
         <div className="flex-shrink-0">
@@ -199,9 +188,9 @@ function Home() {
             onChange={handleSearch}
             className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-
-
         </div>
+
+        
 
         {/* Right Side: Add Button */}
         <div className="flex-shrink-0 mr-10">
@@ -213,6 +202,11 @@ function Home() {
           
 
         </div>
+
+        <div>
+          {user ? <span className=" mr-10 underline text-m font-thin ">Welcome,{user.username}!</span> :  <span className="mr-10 text-sm font-thin ">Welcome, user</span> }
+        </div>
+        
 
         {/*Logout Button */}
         <div>
@@ -245,14 +239,43 @@ function Home() {
                     {/* User Name and Timestamp */}
                     <div className="flex items-center justify-between">
                       <span className="font-semibold">{todo.user.username}</span>
-                      <span className="text-sm text-gray-500">
-                        {new Date(todo.created_at).toLocaleString()}
-                        <button
-                          onClick={()=>handleEditOpenModal(todo)}
-                          className=" ml-10 text-gray-500 hover:text-gray-700"
-                        >
-                          <FontAwesomeIcon icon={faEllipsisV} />
-                        </button>
+                      <span className="flex text-sm text-gray-500z">
+
+                        {todo.created_at && formatDistanceToNow(new Date(todo.created_at), { addSuffix: true })}
+                        {
+                          (user && user.username === todo.user.username) ? (
+                            <>  
+                              <div className = " flex relative ml-2 ">
+                                <button onClick={() => handleOpenUd(todo.id)}  className=" ml-10 text-gray-500 hover:text-gray-700">
+                                  <FontAwesomeIcon icon={faEllipsisV} />
+                                </button>
+
+                                {openMenuId === todo.id && (
+                                  <div className=' absolute ml-12 mt-8 w-32 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10' >
+
+                                    <button onClick={()=>{
+                                      handleEditOpenModal(todo);
+                                      handleCloseUd();}} 
+                                      className="w-full text-left px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 flex items-center">
+                                        <FontAwesomeIcon icon={faEdit} className="mr-2" />
+                                        Edit
+                                    </button>
+
+                                    <button onClick={()=> {
+                                      handleDeleteOpenModal(todo);
+                                      handleCloseUd()}}
+                                      className="w-full text-left px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-100 rounded-lg">
+                                        <FontAwesomeIcon icon={faTrash} className="mr-2" />
+                                        Delete
+                                    </button>
+                                  </div>
+                              )}
+
+                              </div>           
+                            </>
+                            ) : null                                   
+                        }
+                        
                       </span>                    
                     </div>
 
@@ -275,8 +298,11 @@ function Home() {
         submitText="Add Todo"
         formData={formData}
         handleInputChange={handleInputChange}
+        modalType="edit" 
+        
       />
 
+      
       <Modal 
         isOpen={editModal}
         isClosed={handleEditCloseModel}
@@ -285,6 +311,19 @@ function Home() {
         submitText="Update Todo"
         formData={formData}
         handleInputChange={handleInputChange}
+        modalType="edit" 
+      />
+
+      <Modal 
+        isOpen={deleteModal}
+        isClosed={handleDeleteCloseModal}
+        onSubmit={handleDelete}
+        title="Delete Todo"
+        submitText="Remove Todo"
+        formData={formData}
+        handleInputChange={handleInputChange}
+        readOnly = {true}
+        modalType="delete" 
       />
   </>
     
