@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 # Create your models here.
 
+
+
 class ToDoList(models.Model):
   title = models.CharField( max_length=30, null=True , blank = False )
   goal = models.TextField(null=True , blank = False)
@@ -13,3 +15,20 @@ class ToDoList(models.Model):
   def __str__(self):
     return self.title or f"TodoList {self.id}" or "Untitled TodoList"
 
+class Like(models.Model):
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
+  todo = models.ForeignKey(ToDoList , on_delete= models.CASCADE)
+  created_at = models.DateTimeField(default=timezone.now)
+
+  class Meta : 
+    unique_together = ["user" , "todo"]# Prevent multiple likes from same user
+  
+class Comment(models.Model):
+  user = models.ForeignKey(User, on_delete=models.CASCADE)
+  todo = models.ForeignKey(ToDoList , on_delete= models.CASCADE)
+  content = models.TextField()
+  created_at = models.DateTimeField(default=timezone.now)
+
+  def __str__(self):
+      return f"Comment by {self.user.username} on {self.todo.title} "
+    

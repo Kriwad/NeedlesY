@@ -9,6 +9,7 @@ import RegisterAndLogout from './Components/RegisterAndLogout.jsx'
 import ProtectedRoute from './Components/ProtectedRoutes.jsx'
 
 import Home from './Components/Home.jsx'
+import Profile from './Components/Profile.jsx'
 
 function Logout(){
   localStorage.clear()
@@ -27,6 +28,7 @@ const router = createBrowserRouter(
     <Route path="login/" element={<Login />} /> 
     <Route path="logout/" element={<Logout />} /> 
     <Route path="register/" element={<RegisterAndLogout />} />
+    <Route path="profile/:userId/" element={<Profile />} /> 
     
     
     
