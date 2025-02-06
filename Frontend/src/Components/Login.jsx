@@ -39,12 +39,13 @@ const Login = ()=> {
 
   return (
     <>
-    <div className="flex items-center justify-center h-screen bg-gray-100 w-screen " >
+    <div className="flex items-center justify-center h-screen bg-white-100 w-screen " >
 
-      <div className="bg-red-200 w-96 p-8 border-2 border-black rounded-lg shadow-lg">
-        <h2 className="p-5 text-x underline text-teal-600" >Please Login!</h2>
-
-        
+      <div className="  bg-white-200 w-[430px] h-[500px] rounded-lg shadow-2xl ">
+        <h1 className="ml-5 mt-7 mb-0 font-bold text-3xl text-black" >Sign in </h1>
+        <span className="ml-5 m-0 font-medium " >
+          Keep up with your Todo
+        </span>
            
           <form onSubmit={handleSubmit}>
             {error && (
@@ -52,20 +53,16 @@ const Login = ()=> {
             )}
             <div className="flex items-center justify-start flex-col mb-4" >
   
-              <label className="w-full font-bold" >
-                Username
-              </label>
-              <input  className="rounded-md ml-2 w-48 p-1 " type="text" 
+              
+              <input  className="p-3 mt-10 w-[80%] border-2 border-solid border-black rounded-md active:bg-slate-400 " type="text" placeholder="Enter your Username"
                 value={username}
                 onChange={(e)=> setUserName(e.target.value)}
                 />
             </div>
 
             <div className="flex items-center justify-center flex-col mb-4" >
-              <label className="w-full font-bold" >
-                Password
-              </label>
-              <input className="rounded-md ml-2 w-48 p-1" type="password"
+              
+              <input className="rounded-md p-3 mt-1 w-[80%] border-2 border-solid border-black" type="password" placeholder="Enter your password"
                 value={password}
                 onChange={(e)=> setPassword(e.target.value) } />
             </div>
