@@ -41,43 +41,45 @@ const Login = ()=> {
     <>
     <div className="flex items-center justify-center h-screen bg-white-100 w-screen " >
 
-      <div className="  bg-white-200 w-[430px] h-[500px] rounded-lg shadow-2xl ">
-        <h1 className="ml-5 mt-7 mb-0 font-bold text-3xl text-black" >Sign in </h1>
-        <span className="ml-5 m-0 font-medium " >
+      <div className="  bg-white-200 w-[400px] h-[470px] rounded-lg shadow-2xl ">
+        <h1 className="ml-5 mt-7 mb-[9px] font-bold text-3xl text-black" >Sign in </h1>
+        <span className="ml-5 m-0  font-medium " >
           Keep up with your Todo
         </span>
            
           <form onSubmit={handleSubmit}>
-            {error && (
-              <div className="mb-4 text-red-600 font-bold">{error}</div>
-            )}
+            
             <div className="flex items-center justify-start flex-col mb-4" >
   
               
-              <input  className="p-3 mt-10 w-[80%] border-2 border-solid border-black rounded-md active:bg-slate-400 " type="text" placeholder="Enter your Username"
+              <input  className="p-3 mt-10 mb-0 w-[80%] border-2 border-solid border-black rounded-md active:bg-slate-100 hover:bg-slate-100 " type="text" placeholder= "Username or Phone"
                 value={username}
+                
                 onChange={(e)=> setUserName(e.target.value)}
                 />
             </div>
+            {error && (
+              <div className=" ml-10 mb-2 text-red-600 font-bold">{error}</div>
+            )}
 
             <div className="flex items-center justify-center flex-col mb-4" >
               
-              <input className="rounded-md p-3 mt-1 w-[80%] border-2 border-solid border-black" type="password" placeholder="Enter your password"
+              <input className="p-3 mt-4  w-[80%] border-2 border-solid border-black rounded-md active:bg-slate-100 hover:bg-slate-100  " type="password" placeholder="Password"
                 value={password}
                 onChange={(e)=> setPassword(e.target.value) } />
             </div>
 
-            <div className="flex justify-center mt-6 mb-5" >
-                <button className="rounded-md py-1 px-3 border-solid border-black border-2 hover:bg-black hover:text-white hover:border-white-500" type="submit" 
-                disabled = {loading}>
-                  {loading ? 'Logging in..' : "Login"}
+            <div className="flex justify-center mt-[40px] " >
+                <button className=" rounded-3xl  w-[320px] p-3 bg-blue-500 border-none text-white hover:bg-blue-600 hover:text-white active:bg-blue-700 " type="submit" 
+               >
+                 Login
                 </button>
             </div>
 
-            <div>
-              Don't have an account?
+            <div className=" flex  mt-[20px] justify-center items-center  " >
+              <h1  >New to ToDo?</h1>
               <Link className="underline font-bold text-blue-600 hover:text-blue-500" to="/register" >
-                Register here
+                <button className="hover:bg-blue-200 p-1 rounded-3xl" >Join now</button>
               </Link>
             </div>
           </form>

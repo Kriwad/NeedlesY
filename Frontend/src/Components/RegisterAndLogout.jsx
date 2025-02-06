@@ -34,9 +34,9 @@ export default function RegisterAndLogout(){
 
     }catch (error) {
       
-      if (err.response && err.response.data) {
+      if (error.response && error.response.data) {
        
-        setError(err.response.data.message || "Registration failed.");
+        setError(error.response.data.message || "Registration failed.");
       } else {
         setError("An unexpected error occurred. Please try again.");
       }
@@ -50,53 +50,56 @@ export default function RegisterAndLogout(){
   
   return(
     <>
-      <div className="flex items-center flex-col justify-center absolute h-screen w-screen top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 font-bold " >
+      <div className="flex items-center justify-center h-screen bg-white-100 w-screen " >
+        <div className="bg-white-200 w-[400px] h-[450px] rounded-lg shadow-2xl"> 
+          <h1 className="ml-5 mt-7 mb-[9px] font-bold text-3xl text-black" >Sign Up</h1>
 
-        <h1 className="mb-7 font-bold underline" >Please Register Here</h1>
-        <form className="flex flex-col" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
 
-          <div className="flex flex-col mb-4 " >
-            <label >
-              Username
-            </label>
-            <input className="border-solid border-black border-2 p-1 rounded-md " type="text" placeholder="Username"
-              value={data.username}
-              onChange={(e)=> setData({...data, username: e.target.value})} />
-          </div>
-
-          
-          
-          <div className="flex flex-col mb-4 ">
-            <label >
-              Password : 
+            <div className="flex items-center justify-start flex-col mb-4 " >
               
-            </label>
-            <input className="border-solid border-black border-2 p-1 rounded-md " type="password" placeholder="Password" 
-              value={data.Password}
-              onChange={(e)=> setData({...data, password: e.target.value})}/>
-          </div>
-          
-          {loading && <p className="text-blue-500">Processing...</p>}
-          {success && <p className="text-green-500">{success}</p>}
-          {error && <p className="text-red-500">{error}</p>}
-          
-          <div>
-            
-              <button className="rounded-md py-1 px-3 border-solid border-black border-2 hover:bg-black hover:text-white hover:border-white-500"  type="submit" >Register</button>
+              <input className="p-3 mt-10 mb-0 w-[80%] border-2 border-solid border-black rounded-md active:bg-slate-100 hover:bg-slate-100" type="text" placeholder="Username"
+                value={data.username}
+                onChange={(e)=> setData({...data, username: e.target.value})} />
+            </div>
+
             
             
-          </div>
-          
-        </form>
-        <p className="mt-4">
-        Already have an account?{" "}
-        <button
-          onClick={() => navigate("/login")}
-          className="underline text-blue-600 hover:text-blue-500"
-        >
-          Login here
-        </button>
-      </p>
+            <div className="flex items-center justify-start flex-col mb-4  ">
+              
+              <input className="p-3 mt-4 mb-4  w-[80%] border-2 border-solid border-black rounded-md active:bg-slate-100 hover:bg-slate-100  " type="password" placeholder="Password" 
+                value={data.Password}
+                onChange={(e)=> setData({...data, password: e.target.value})}/>
+            </div>
+            
+            <div>
+              {loading && <p className= "text-center mb-[10px] text-blue-500">Processing...</p>}
+              {success && <p className="text-center mb-[10px] text-green-500">{success}</p>}
+              {error && <p className="text-center mb-[10px] text-red-500">{error}</p>}
+            </div>
+            
+            
+            <div  className="flex justify-center mt-[20px] mb-5" >
+              
+                <button className="rounded-3xl  w-[320px] p-3 bg-blue-500 border-none text-white hover:bg-blue-600 hover:text-white active:bg-blue-700 "  type="submit" >Register</button>
+              
+              
+            </div>
+
+            <div className="flex items-center mt-[27px] justify-center ">
+              <h1>Already have an account? </h1>
+              <button className="hover:bg-blue-200 p-1 rounded-3xl text-blue-600 hover:text-blue-500 underline font-bold"
+                onClick={() => navigate("/login")}
+                
+              >
+                Login here
+              </button>
+            </div>
+          </form>
+         
+
+        </div>
+        
       </div>
     </>
   )
