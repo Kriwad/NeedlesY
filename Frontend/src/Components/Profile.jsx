@@ -34,7 +34,8 @@ function Profile() {
   const fetchUser = async (e)=>{
     try{
       const response = await api.get(`api/user/profile/${userId}/`)
-      
+      console.log(response.data)
+      console.log(response.data[0])
       setUser(response.data[0])
       
       
@@ -71,7 +72,7 @@ function Profile() {
               <div className="flex items-center justify-between mx-6 ">
                 {/* Left Side: ToDoList Text */}
                 <div className="flex-shrink-0">
-                  <span className="text-xl font-semibold">ToDoList</span>
+                  <button className="text-xl cursor font-semibold" onClick={()=> navigate("/")} >ToDoList</button>
                 </div>
         
                 {/* Center: Input Field */}
@@ -99,7 +100,7 @@ function Profile() {
                 </div>
         
                 <div>
-                  {user ? <span className=" mr-10 underline text-m font-thin " >Welcome,{user.user.username}</span> :  <span className="mr-10 text-sm font-thin ">Welcome, user</span> }
+                  {user ? <span className=" mr-10  text-m font-thin " >{user.user.username}</span> :  <span className="mr-10 text-sm font-thin ">Welcome, user</span> }
                 </div>
                 
         

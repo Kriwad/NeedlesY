@@ -34,7 +34,7 @@ class CurrentUserView(generics.RetrieveAPIView):
 
 class DetailUserTodoView(generics.ListAPIView):
   serializer_class = ToDoSerializer
-  permission_classes = [AllowAny]
+  permission_classes = [IsAuthenticated]
 
 
   def get_queryset(self):
