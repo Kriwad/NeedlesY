@@ -4,12 +4,12 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import {RouterProvider, createBrowserRouter, createRoutesFromElements , Route, Navigate} from 'react-router-dom'
 
-import Login from './Components/Login.jsx'
-import RegisterAndLogout from './Components/RegisterAndLogout.jsx'
-import ProtectedRoute from './Components/ProtectedRoutes.jsx'
+import Login from './Pages/Login.jsx'
+import RegisterAndLogout from './Pages/RegisterAndLogout.jsx'
+import ProtectedRoute from './Pages/ProtectedRoutes.jsx'
 
-import Home from './Components/Home.jsx'
-import Profile from './Components/Profile.jsx'
+import Home from './Pages/Home.jsx'
+import Profile from './Pages/Profile.jsx'
 
 function Logout(){
   localStorage.clear()

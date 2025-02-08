@@ -54,12 +54,29 @@ import React from "react";
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
             ></textarea>
           </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">
+              Image
+            </label>
+            <input
+            type = "file"
+              name="image"
+              onChange={handleInputChange}
+              accept="image/"
+              readOnly={readOnly}
+             
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            ></input>
+          </div>
           <div className="flex justify-end">
             <button
               type="submit"
               className={modalType === "delete" ? "bg-red-600  text-white px-4 py-2 hover:bg-red-900" : "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"}
             >
               {submitText}
+            </button>
+            <button onClick={isClosed} >
+              Close
             </button>
           </div>
         </form>

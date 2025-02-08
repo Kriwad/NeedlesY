@@ -1,7 +1,8 @@
 import React, {useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye , faEyeSlash} from "@fortawesome/free-solid-svg-icons";
 
 
 
@@ -14,6 +15,7 @@ export default function RegisterAndLogout(){
   })
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [showPassword , setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
   
@@ -65,11 +67,16 @@ export default function RegisterAndLogout(){
 
             
             
-            <div className="flex items-center justify-start flex-col mb-4  ">
-              
-              <input className="p-3 mt-4 mb-4  w-[80%] border-2 border-solid border-black rounded-md active:bg-slate-100 hover:bg-slate-100  " type="password" placeholder="Password" 
-                value={data.Password}
+            <div className="flex items-center justify-center flex-col mb-4  ">
+              <div className="relative w-[80%]">
+
+                <input className="p-3 mt-4 w-full border-2 border-solid border-black rounded-md active:bg-slate-100 hover:bg-slate-100 pr-14 " type= {showPassword ? "text": "password"} placeholder="Password" 
+                value={data.password}
                 onChange={(e)=> setData({...data, password: e.target.value})}/>
+                <button className="absolute right-3 top-[60%] translate-y-[-50%] text-sm font-semibold bg-transparent text-gray-600" type = "button" onClick={()=> setShowPassword(!showPassword)} >
+                  <FontAwesomeIcon icon={showPassword ? faEye :  faEyeSlash } />
+                </button>
+              </div>      
             </div>
             
             <div>
