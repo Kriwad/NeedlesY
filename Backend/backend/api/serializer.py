@@ -27,7 +27,7 @@ class ToDoSerializer(serializers.ModelSerializer):
   user = DetailUserSerializer(read_only = True)
   class Meta:
     model= ToDoList
-    fields = ['id', 'user', 'title' , 'goal' , 'image', 'created_at']
+    fields = ['id', 'user', 'title' , 'goal' , 'image', 'video', 'created_at']
     read_only_fields = ['user']
 
 

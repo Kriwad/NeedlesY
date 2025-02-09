@@ -50,6 +50,12 @@ function Home() {
     setSelectTodo(null)
   }
 
+  const handleRemoveImage = (indexToRemove) => {
+    setFormData(prevState => ({
+      ...prevState,
+      image: prevState.image.filter((_, index) => index !== indexToRemove)
+    }));
+  };
   const handleImageClick = (imageUrl)=>{
     setSelectedimage(imageUrl)
     setImageModalOpen(true)
@@ -77,6 +83,8 @@ function Home() {
     setFormData({
       title : todo.title,
       goal : todo.goal,
+      image : todo.image, 
+      video : todo.video, 
   
     })
 
@@ -93,7 +101,8 @@ function Home() {
     setFormData({
       title : todo.title,
       goal : todo.goal,
-      
+      image : todo.image, 
+      video : todo.video, 
     })
 
   }
@@ -117,47 +126,84 @@ function Home() {
   const handleInputChange = (e) => {
     const { name, value  , type , files } = e.target;
     if (type === "file"){
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: files[0]
-    }));
+      if (name === "image"){
+        const imagesFiles = files ? Array.from(files) : [];
+        
+        setFormData((prevState) => ({
+          ...prevState,
+          [name]: imagesFiles
+        }));
+      }
+      else if(name === "video"){
+        const videoFile = files && files.length > 0 ? files[0] : null;
+        setFormData(prevState => ({
+          ...prevState , [name] : videoFile
+        }))
+      }
+    ;
   }else{
     setFormData(prevState => ({
-      ...prevState , [name]: value
+      ...prevState , [name]: e.target.value
     }));
   }
   }
   
 
-  const handleSubmit = async (e)=> {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formDataToSend = new FormData();
-    formDataToSend.append("title" , formData.title)
-    formDataToSend.append("goal" , formData.goal)
-    if (formData.image){
-      formDataToSend.append("image" , formData.image)
+  
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("goal", formData.goal);
+  
+    // Only append image if it exists and has items
+    if (formData.image && formData.image.length > 0) {
+      formData.image.forEach((image, index) => {
+        formDataToSend.append("image", image);
+      });
     }
-    if (formData.video){
-      formData.append("video" , formData.video)
+  
+    // Only append video if it exists
+    if (formData.video) {
+      formDataToSend.append("video", formData.video);
     }
-    
-    try{
-      await api.post("/api/user/todo/" ,formDataToSend);
-      await fetchTodos()
-      handleCloseModel()
-    } catch(error){
-        console.log("error")
+      
+    try {
+      await api.post("/api/user/todo/", formDataToSend);
+      await fetchTodos();
+      handleCloseModel();
+    } catch(error) {
+      console.log("error", error);
     } 
-  }
+  };
 
   const handleEdit= async (e)=>{
     if (!selectTodo) return
     e.preventDefault();
     const formDataToSend = new FormData();
+
     formDataToSend.append("title", formData.title)
     formDataToSend.append("goal", formData.goal)
-    if (formData.image){
-      formDataToSend.append("image", formData.image)
+
+    if (formData.image && formData.image.length > 0){
+      
+      formData.image.forEach((image) => {
+        if (image instanceof File){
+          formDataToSend.append("image" , image);
+        } else if (typeof image === "string") { 
+          formDataToSend.append("existing_images" , image)
+        }
+      })
+      
+    }
+    if (formData.video){
+      if (formData.video instanceof File){
+        formDataToSend.append("video" , formData.video)
+
+      }else if (typeof formData.video === "string"){ 
+        formDataToSend.append("existing_video", formData.video)
+      }
+     
     }
     
     try{
@@ -268,12 +314,33 @@ function Home() {
                       <CardContent className="pb-4">
                         <h3 className="text-lg font-semibold mt-2">{todo.title}</h3>
                         <p className="text-sm w-[95%] text-muted-foreground whitespace-pre-wrap mt-1 break-words">{todo.goal}</p>
-                        {todo.image &&(
-                          <img src={todo.image} onClick={()=>handleImageClick(todo.image)} className="mt-2 w-full rounded-lg" alt="" />
-                        ) }
+
+                        {Array.isArray(todo.image) ? (
+                          todo.image.map((imageUrl, index) => (
+                            <img 
+                              key={index} 
+                              src={imageUrl} 
+                              onClick={() => handleImageClick(imageUrl)} 
+                              className="mt-2 w-full rounded-lg" 
+                              alt={`Todo Image ${index}`} 
+                            />
+                          ))
+                        ) : (
+                          todo.image && (
+                            <img 
+                              src={todo.image} 
+                              onClick={() => handleImageClick(todo.image)} 
+                              className="mt-2 w-full rounded-lg" 
+                              alt="Todo Image" 
+                            />
+                          )
+                        )}
+
                         {todo.video && (
-                          <video >
-                            <source src={todo.video} type = "video/mp.4" />
+                          <video  controls
+                          className="mt-2 w-full rounded-lg"
+                          preload="metadata" >
+                            <source src={todo.video} type = "video/mp4" />
                             Your browser does not support the video tag
                           </video>
                         )}
