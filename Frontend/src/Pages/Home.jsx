@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader } from "@/Components/ui/card"
 import { Button } from "@/Components/ui/button"
 import { Heart, MessageCircle, MoreHorizontal } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/Components/ui/dropdown"
+import Navbar from '../Modals/Navbar'
 
 
 
@@ -31,7 +32,8 @@ function Home() {
   const [formData, setFormData] = useState({
     title: "",
     goal : "",
-    image: null
+    image: null,
+    video : null
   })
   const [imageModalOpen , setImageModalOpen] = useState(false)
   const [selectedImage , setSelectedimage] = useState(null)
@@ -43,6 +45,7 @@ function Home() {
       title: "",
       goal : "",
       image : null,
+      video : null ,
     })
     setSelectTodo(null)
   }
@@ -134,6 +137,9 @@ function Home() {
     if (formData.image){
       formDataToSend.append("image" , formData.image)
     }
+    if (formData.video){
+      formData.append("video" , formData.video)
+    }
     
     try{
       await api.post("/api/user/todo/" ,formDataToSend);
@@ -151,7 +157,7 @@ function Home() {
     formDataToSend.append("title", formData.title)
     formDataToSend.append("goal", formData.goal)
     if (formData.image){
-      formDataToSend.append("title", formData.title)
+      formDataToSend.append("image", formData.image)
     }
     
     try{
@@ -207,64 +213,22 @@ function Home() {
     
   <>
   
-    <nav className="flex-1 bg-slate-400 py-4">
-      
-      <div className="flex items-center justify-between mx-6 ">
-        {/* Left Side: ToDoList Text */}
-        <div className="flex-shrink-0">
-          <span className="text-xl font-semibold">ToDoList</span>
-        </div>
-
-        {/* Center: Input Field */}
-        <div className="flex-1 ml-20 mr-10">
-          <input
-            type="text"
-            placeholder="Search User"
-            value={Search}
-            onChange={handleSearch}
-            className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        
-
-        {/* Right Side: Add Button */}
-        <div className="flex-shrink-0 mr-10">
-          <button className="w-10 h-10 bg-blue-500 text-white rounded-xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onClick={handleOpenModal}
-          >
-            <FontAwesomeIcon icon={faPlus} size="m" />
-          </button>
-          
-
-        </div>
-
-        <div>
-          {user ? <button className=" mr-10 underline text-m font-thin " onClick={()=> navigate(`profile/${user.id}`)} >Welcome,{user.username}</button> :  <span className="mr-10 text-sm font-thin ">Welcome, user</span> }
-        </div>
-        
-
-        {/*Logout Button */}
-        <div>
-          <button onClick={handleLogout} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Logout</button>
-        </div>
-      </div>
-    </nav>
-    
+  <div className='w-1vh h-1vh bg-gray-100' >
+  <Navbar user={user} onLogout={handleLogout} onOpenModal={handleOpenModal} />
     
     {/* Todo List Display */}
-      <div className="container mx-auto max-w-2xl my-auto px-4 py-8">
+      <div className="container border-solid border-2 mx-auto max-w-2xl my-auto ">
        
           {todos.length === 0 ? (
-            <p className="text-center text-gray-500">No todos found. Add one!</p>
+            <p className="text-center text-gray-500">No Needles found. Add one!</p>
           ) : (
             todos.map((todo) => (
               <div
                 key={todo.id}
                 className=" rounded-lg  transition-shadow">
-                <div className="container flex justify-center border-solid mx-auto p-1">
+                <div className="container flex justify-center  border-solid mx-auto">
                   
-                    <Card key={todo.id} className="mb-1 mt-0 w-[500px] max-w-[90vw]">
+                    <Card key={todo.id} className="mb-1 mt-0 w-full max-w-[90vw]">
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <div className="flex items-center gap-2 ">
                           <Avatar className="h-10 w-10">
@@ -272,7 +236,7 @@ function Home() {
                             <AvatarFallback>{todo.user.username[0]}</AvatarFallback>
                           </Avatar>
                           <div className="flex flex-col">
-                            <p className="text-sm p-0 font-bold  hover:underline cursor " onClick={() => navigate(`profile/${todo.user.id}`)}>
+                            <p className="text-sm p-0 font-bold  hover:underline cursor-pointer " onClick={() => navigate(`profile/${todo.user.id}`)}>
                               {todo.user.username}
                             </p>
                             <p className="text-xs text-center font-extralight text-muted-foreground">
@@ -303,10 +267,16 @@ function Home() {
                       </CardHeader>
                       <CardContent className="pb-4">
                         <h3 className="text-lg font-semibold mt-2">{todo.title}</h3>
-                        <p className="text-sm w-[440px] text-muted-foreground whitespace-pre-wrap mt-1 break-words">{todo.goal}</p>
+                        <p className="text-sm w-[95%] text-muted-foreground whitespace-pre-wrap mt-1 break-words">{todo.goal}</p>
                         {todo.image &&(
                           <img src={todo.image} onClick={()=>handleImageClick(todo.image)} className="mt-2 w-full rounded-lg" alt="" />
                         ) }
+                        {todo.video && (
+                          <video >
+                            <source src={todo.video} type = "video/mp.4" />
+                            Your browser does not support the video tag
+                          </video>
+                        )}
                         <div className="mt-4 flex justify-end gap-2">
                         
                           <button className="text-primary">
@@ -357,8 +327,8 @@ function Home() {
         isOpen={ModalOpen}
         isClosed={handleCloseModel}
         onSubmit={handleSubmit}
-        title="Create a New Todo"
-        submitText="Add Todo"
+        title="Create a New Needle"
+        submitText="Upload"
         formData={formData}
         handleInputChange={handleInputChange}
         modalType="edit" 
@@ -370,8 +340,8 @@ function Home() {
         isOpen={editModal}
         isClosed={handleEditCloseModel}
         onSubmit={handleEdit}
-        title="Edit Todo"
-        submitText="Update Todo"
+        title="Edit Needle"
+        submitText="Update"
         formData={formData}
         handleInputChange={handleInputChange}
         modalType="edit" 
@@ -381,13 +351,16 @@ function Home() {
         isOpen={deleteModal}
         isClosed={handleDeleteCloseModal}
         onSubmit={handleDelete}
-        title="Delete Todo"
-        submitText="Remove Todo"
+        title="Delete Needle"
+        submitText="Discard"
         formData={formData}
         handleInputChange={handleInputChange}
         readOnly = {true}
         modalType="delete" 
       />
+  </div>
+
+  
   </>
     
   )

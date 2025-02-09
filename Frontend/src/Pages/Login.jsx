@@ -44,7 +44,7 @@ const Login = () => {
           <h1 className="ml-5 mt-7 mb-[9px] font-bold text-3xl text-black">
             Sign in{" "}
           </h1>
-          <span className="ml-5 m-0  font-medium ">Keep up with your Todo</span>
+          <span className="ml-5 m-0  font-medium ">To the Point</span>
 
           <form onSubmit={handleSubmit}>
             <div className="flex items-center justify-start flex-col mb-4">
@@ -89,7 +89,7 @@ const Login = () => {
             </div>
 
             <div className=" flex  mt-[20px] justify-center items-center  ">
-              <h1>New to ToDo?</h1>
+              <h1>New to Needles?</h1>
               <Link
                 className="underline font-bold text-blue-600 hover:text-blue-500"
                 to="/register"
