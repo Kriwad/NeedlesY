@@ -43,8 +43,7 @@ class DetailUserTodoView(generics.ListAPIView):
 
 class EditDetailTodoView(generics.RetrieveUpdateDestroyAPIView):
   serializer_class = ToDoSerializer
-  permission_classes = [AllowAny]
-
+  permission_classes = [IsAuthenticated]
   def get_queryset(self):
     user_id = self.kwargs["user_id"]
     todo_id = self.kwargs["pk"]
