@@ -362,7 +362,7 @@ function Home() {
           submitText="Upload"
           formData={formData}
           handleInputChange={handleInputChange}
-          modalType="edit"
+          modalType="submit"
         />
 
         <Modal

@@ -149,6 +149,27 @@ function Profile() {
     }
   };
 
+  const handleSubmit = async (e)=>{
+    e.preventDefault()
+    const formDataToSend = new FormData()
+    formDataToSend.append("title" , formData.title)
+    formDataToSend.append("goal" , formData.goal)
+    if (formData.image){
+      formDataToSend.append("image" , formData.image)
+    }
+    if (formDataToSend.video){
+      formDataToSend.append("video" , formData.video)
+    }
+
+    try{
+      await api.post(`api/user/todo/` , formDataToSend)
+      await fetchtodos()
+      handleCloseModal()
+    }catch(error){
+      console.log("error: " , error)
+    }
+  }
+
   useEffect(() => {
     fetchtodos();
     fetchUser();
@@ -343,13 +364,13 @@ function Profile() {
 
       <Modal
           isOpen={modal}
-          // isClosed={handleCloseModel}
-          // onSubmit={handleSubmit}
+          isClosed={handleCloseModal}
+          onSubmit={handleSubmit}
           title="Create a New Needle"
           submitText="Upload"
           formData={formData}
           handleInputChange={handleInputChange}
-          modalType="edit"
+          modalType="submit"
         />
 
         <Modal
