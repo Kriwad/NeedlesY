@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import CreateUserView,ListActiveUserView, ListUserView , CreateToDoListView , EditToDoListView ,ListTodoView , CurrentUserView ,DetailUserTodoView, EditDetailTodoView
+from .views import CreateUserView,ListActiveUserView, ListUserView , CreateToDoListView , EditToDoListView ,ListTodoView , CurrentUserView ,DetailUserView , ListUserToDoView
 
 
 
@@ -12,9 +12,11 @@ urlpatterns = [
     path('user/todo/', CreateToDoListView.as_view(), name='todo'),
     path('user/todo/list/', ListTodoView.as_view(), name='todo'),
     path('user/todo/edit/<int:pk>/', EditToDoListView.as_view(), name='edit_todo'),
+    
+
+    path('user/profile/<int:id>/', DetailUserView.as_view(), name='users_nameid'),
+    path('user/profile/todos/<int:user_id>/',ListUserToDoView.as_view(), name='users_todo'),
    
-    path('user/profile/<int:user_id>/', DetailUserTodoView.as_view(), name='users_todo'),
-    path('user/profile/edit/<int:user_id>/<int:pk>/', EditDetailTodoView.as_view(), name='user_todo'),
 ]
 
 

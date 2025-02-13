@@ -21,7 +21,8 @@ const Navbar = ({ user, onLogout, onOpenModal }) => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <span className="text-2xl font-bold text-white">ToDoList</span>
+            <span className="text-2xl font-bold text-white">NeedlesY</span>
+            
           </div>
 
           {/* Search Bar */}
@@ -53,7 +54,7 @@ const Navbar = ({ user, onLogout, onOpenModal }) => {
               <div className="flex items-center space-x-1">
                 <Avatar className="h-8 w-8 cursor-pointer" onClick={() => navigate(`profile/${user.id}`)}>
                   <AvatarImage src={user.image || "/placeholder.svg?height=32&width=32"} alt={user.username} />
-                  <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
+                  <AvatarFallback>{user.username[0]}</AvatarFallback>
                 </Avatar>
                 <span className="text-white hover:underline cursor-pointer" onClick={() => navigate(`profile/${user.id}`)}>
                   {user.username}
