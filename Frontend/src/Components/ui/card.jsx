@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const Card = ({ className, children, ...props }) => (
-  <div className={cn("r border bg-white p-4  ", className)} {...props}>
+  <div className={cn("r border bg-white p-5  ", className)} {...props}>
     {children}
   </div>
 );

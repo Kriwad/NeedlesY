@@ -22,6 +22,10 @@ const Login = () => {
       const res = await api.post("/api/token/", { username, password });
       localStorage.setItem(ACCESS_TOKEN, res.data.access);
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+
+      const useRes = await api.get(`api/user/current/` , {headers: {Authorization: `Bearer ${res.data.access}`}} )
+      localStorage.setItem("user_id" ,useRes.data.id )
+      localStorage.setItem("username" ,useRes.data.username )
       navigate("/");
     } catch (error) {
       if (error.response && error.status === 401) {

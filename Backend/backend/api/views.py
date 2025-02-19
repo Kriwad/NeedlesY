@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from .serializer import UserSerializer , ToDoSerializer , CommentSerializer , LikeSerializer
+from .serializer import UserSerializer , ToDoSerializer ,DetailUserSerializer , CommentSerializer , LikeSerializer
 from .models import ToDoList , Comment , Like
 from rest_framework.permissions import AllowAny , IsAuthenticated , IsAdminUser 
 from rest_framework import generics , viewsets
@@ -23,7 +23,7 @@ class ListActiveUserView(generics.ListAPIView):
   permission_classes= [IsAdminUser]
 
   
-#fetches current user
+#fetches current logged in user
 class CurrentUserView(generics.RetrieveAPIView):
   serializer_class = UserSerializer
   permission_classes = [IsAuthenticated]
@@ -45,7 +45,7 @@ class CreateToDoListView(generics.CreateAPIView):
 #lists all todo for home page
 class ListTodoView(generics.ListAPIView):
   serializer_class = ToDoSerializer
-  permission_classes = [IsAuthenticated]
+  permission_classes = [AllowAny]
 
   def get_queryset(self):
    return ToDoList.objects.all().order_by("-created_at")
@@ -61,7 +61,7 @@ class EditToDoListView(generics.RetrieveUpdateDestroyAPIView):
 
 #fetches the clicked user
 class DetailUserView(generics.RetrieveAPIView):
-  serializer_class = UserSerializer
+  serializer_class = DetailUserSerializer
   permission_classes = [AllowAny]
   lookup_field = "id"
 
@@ -69,7 +69,7 @@ class DetailUserView(generics.RetrieveAPIView):
     user_id = self.kwargs["id"]
     return User.objects.filter(id = user_id)
 
-# lists the users profile
+# lists the users profile todos
 class ListUserToDoView(generics.ListAPIView):
  
   serializer_class = ToDoSerializer

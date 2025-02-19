@@ -95,11 +95,6 @@ function Home() {
     setSearch(e.target.value);
   };
 
-  const handleLogout = (e) => {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-    navigate("/login/");
-  };
 
   // handles creating a post
   const handleSubmit = async (e) => {
@@ -132,7 +127,7 @@ function Home() {
       goal: todo.goal,
     });
   };
-  const handleEditCloseModal = (todo) => {
+  const handleEditCloseModal = () => {
     setEditModal(false);
     resetForm();
   };
@@ -172,7 +167,7 @@ function Home() {
     });
   };
 
-  const handleDeleteCloseModal = async (e) => {
+  const handleDeleteCloseModal = async () => {
     setDeleteModal(false);
   };
 
@@ -193,7 +188,7 @@ function Home() {
     fetchUser();
   }, []);
 
-  const fetchUser = async (e) => {
+  const fetchUser = async () => {
     try {
       const user = await api.get("/api/user/current/");
       setUser(user.data);
@@ -203,7 +198,7 @@ function Home() {
     }
   };
 
-  const fetchTodos = async (e) => {
+  const fetchTodos = async () => {
     try {
       const response = await api.get("/api/user/todo/list/");
       setTodos(response.data);
@@ -216,13 +211,13 @@ function Home() {
     <>
       <div className="w-1vh h-1vh bg-gray-100">
         <Navbar
-          user={user}
-          onLogout={handleLogout}
+          
+       
           onOpenModal={handleOpenModal}
         />
 
         {/* Todo List Display */}
-        <div className="container border-solid border-2 mx-auto max-w-2xl my-auto ">
+        <div className="container border-solid border-2 bg-slate-300 mx-auto max-w-2xl my-auto ">
           {todos.length === 0 ? (
             <p className="text-center text-gray-500">
               No Needles found. Add one!
@@ -237,7 +232,7 @@ function Home() {
                         <Avatar className="h-10 w-10">
                           <AvatarImage
                             src={
-                              todo.user.image ||
+                              todo.image ||
                               "/placeholder.svg? height=40&width=40"
                             }
                             alt={todo.user.username}

@@ -9,12 +9,13 @@ import {
   faEdit,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import Navbar from "../Modals/Navbar";
 import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/Components/ui/card";
 import { Button } from "@/Components/ui/button";
 
-import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
+import { Heart, MessageCircle, Briefcase, MapPin } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,108 +29,129 @@ import { formatDistanceToNow, set } from "date-fns";
 function Profile() {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
-  
+
   const [todos, setTodos] = useState([]);
-  const [formData , setFormData] = useState({
-    title : "",
-    goal : "",
-    image : null,
-    video : null
-  })
-  const [modal , setModal] = useState(false)
-  const [selectTodo , setSelectTodo] = useState("")
+  const [formData, setFormData] = useState({
+    title: "",
+    goal: "",
+    image: null,
+    video: null,
+  });
+  const [modal, setModal] = useState(false);
+  const [selectTodo, setSelectTodo] = useState("");
   const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
-  const resetForm = (e) => {
+  const resetForm = () => {
     setFormData({
-      title : "",
-      goal : "",
-      image : null,
-      video : null
-    })
-  }
+      title: "",
+      goal: "",
+      image: null,
+      video: null,
+    });
+  };
 
-  const handleInputChange = (e)=> {
-    const { name , value , type , files } = e.target;
+  const handleInputChange = (e) => {
+    const { name, value, type, files } = e.target;
     if (type === "file") {
-      setFormData((prev)=> ({
-        ...prev , 
-        [name] : files[0],
-      }))
-    }else{
-      setFormData((prev)=> ({
-        ...prev , 
-        [name] : value
-      }))
+      setFormData((prev) => ({
+        ...prev,
+        [name]: files[0],
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
-  }
+  };
 
   const handleSearch = (e) => {
-   setSearch(e.target.value)
+    setSearch(e.target.value);
   };
 
-// Handles Posting modal
-  const handleModalOpen = (e) => {
-    resetForm()
-    setModal(true)
+  // Handles Posting modal
+  const handleModalOpen = () => {
+    resetForm();
+    setModal(true);
   };
-  const handleCloseModal = (e)=> {
-    setModal(false)
-    resetForm()
-  }
+  const handleCloseModal = () => {
+    setModal(false);
+    resetForm();
+  };
 
-  // handles edit modal 
-  const handleEditOpenModal = (todo)=> {
-    
-    setEditModal(true)
-    setSelectTodo(todo)
+  // handles edit modal
+  const handleEditOpenModal = (todo) => {
+    setEditModal(true);
+    setSelectTodo(todo);
+
+    setFormData({
+      title: todo.title,
+      goal: todo.goal,
+      
+    });
+  };
+  const handleDeleteOpenModal= (todo)=>{
+    resetForm()
+    setDeleteModal(true)
+    setSelectTodo(todo);
     setFormData({
       title : todo.title,
-      goal : todo.goal
+      goal: todo.goal,
+      
     })
-  }
-  const handleEditCloseModal = (todo)=> {
-    setEditModal(false)
+  };
+  const handleDeleteCloseModal = ()=>{
+    setDeleteModal(false);
     resetForm()
+
   }
+  const handleEditCloseModal = () => {
+    setEditModal(false);
+    resetForm();
+  };
   // handles edit
-  const handleEdit= async (e)=>{
-    
-    e.preventDefault()
+  const handleEdit = async (e) => {
+    e.preventDefault();
     const formDataToSend = new FormData();
-    formDataToSend.append("title" , formData.title)
-    formDataToSend.append("goal" , formData.goal)
-    if (formData.image ) {
-      formDataToSend.append("image", formData.image)
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("goal", formData.goal);
+    if (formData.image) {
+      formDataToSend.append("image", formData.image);
     }
     if (formData.video) {
-      formDataToSend.append("video" , formData.video)
+      formDataToSend.append("video", formData.video);
     }
 
     try {
-      await api.put(`/api/user/todo/edit/${selectTodo.id}/`, formDataToSend)
+      await api.put(`/api/user/todo/edit/${selectTodo.id}/`, formDataToSend);
+      await fetchtodos();
+      handleEditCloseModal();
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  };
+
+  
+
+  const handleDelete = async (e)=>{
+    e.preventDefault();
+    try{
+      await api.delete(`/api/user/todo/edit/${selectTodo.id}/` , formData)
       await fetchtodos()
-      handleEditCloseModal()
+      handleDeleteCloseModal()
     }catch(error){
       console.log("error: " , error)
     }
   }
 
-  // handles logout
-  const handleLogout = (e) => {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-    navigate("/login");
-  };
 
-
-// fetches user
-  const fetchUser = async (e) => {
+  // fetches user
+  const fetchUser = async () => {
     try {
-      const response = await api.get(`api/user/current/`);
+      const response = await api.get(`api/user/profile/${ userId }`);
       console.log(response.data);
 
       setUser(response.data);
@@ -139,7 +161,7 @@ function Profile() {
   };
 
   // fetch todos
-  const fetchtodos = async (e) => {
+  const fetchtodos = async () => {
     try {
       const response = await api.get(`api/user/profile/todos/${userId}`);
       console.log(response.data);
@@ -149,26 +171,26 @@ function Profile() {
     }
   };
 
-  const handleSubmit = async (e)=>{
-    e.preventDefault()
-    const formDataToSend = new FormData()
-    formDataToSend.append("title" , formData.title)
-    formDataToSend.append("goal" , formData.goal)
-    if (formData.image){
-      formDataToSend.append("image" , formData.image)
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formDataToSend = new FormData();
+    formDataToSend.append("title", formData.title);
+    formDataToSend.append("goal", formData.goal);
+    if (formData.image) {
+      formDataToSend.append("image", formData.image);
     }
-    if (formDataToSend.video){
-      formDataToSend.append("video" , formData.video)
+    if (formDataToSend.video) {
+      formDataToSend.append("video", formData.video);
     }
 
-    try{
-      await api.post(`api/user/todo/` , formDataToSend)
-      await fetchtodos()
-      handleCloseModal()
-    }catch(error){
-      console.log("error: " , error)
+    try {
+      await api.post(`api/user/todo/`, formDataToSend);
+      await fetchtodos();
+      handleCloseModal();
+    } catch (error) {
+      console.log("error: ", error);
     }
-  }
+  };
 
   useEffect(() => {
     fetchtodos();
@@ -176,90 +198,70 @@ function Profile() {
     console.log("user", user);
     console.log("userId from URL", userId);
   }, [userId]);
-  console.log(user , userId)
-
+  console.log(user, userId);
 
   return (
     <>
-      <nav className=" mb-0 bg-black  py-4 shadow-md">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex-shrink-0">
-              <span
-                onClick={() => {
-                  navigate("/");
-                }}
-                className="text-2xl font-bold text-white hover:cursor-pointer"
-              >
-                NeedlesY
-              </span>
-            </div>
-
-            {/* Search Bar */}
-            <div className="flex-grow mx-8 max-w-xl">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search users..."
-                  value={search}
-                  onChange={handleSearch}
-                  className="w-full px-4 py-2 rounded-full bg-white bg-opacity-20 text-white placeholder-gray-200 focus:outline-none focus:ring-2 focus:ring-white focus:bg-opacity-30 transition duration-300"
-                />
-                <FontAwesomeIcon
-                  icon={faSearch}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white opacity-70"
-                />
-              </div>
-            </div>
-            
-            {/* User Actions */}
-            
-              
-            
-            <div className="flex items-center  space-x-6">
-              {/* Add Button */}
-              {user && user.id && user.id.toString() === userId && (
-                <button onClick={()=> handleModalOpen()} className="w-10 h-10 bg-white bg-opacity-20 text-white rounded-full hover:bg-opacity-30 focus:outline-none focus:ring-2 focus:ring-white transition duration-300 transform hover:scale-110">
-                <FontAwesomeIcon icon={faPlus} size="lg" />
-                </button>
-                )}
-                
-            
+      <Navbar
           
-            
-
-              {/* User Profile */}
-              {user ? (
-                <div className="flex items-center space-x-1">
-                  <Avatar className="h-8 w-8 cursor-pointer">
-                    <AvatarImage
-                      src={user || "/placeholder.svg?height=32&width=32"}
-                      alt={user.username}
-                    />
-                    <AvatarFallback>{user.username[0]}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-white hover:underline cursor-pointer">
-                    {user.username}
-                  </span>
-                </div>
-              ) : (
-                <span className="text-white opacity-70">Guest</span>
-              )}
-
-              {/* Logout Button */}
-              <button
-                onClick={handleLogout}
-                className="bg-white text-black font-semibold py-2 px-4 rounded-full hover:bg-blue-100 transition duration-300"
-              >
-                Logout
-              </button>
+         
+          onOpenModal={handleModalOpen}
+        />
+      {/* Profile Header */}
+      <div className="container mx-auto px-4 py-8">
+        <Card className="w-full max-w-4xl mx-auto overflow-hidden">
+          <div className="relative h-48 bg-gradient-to-r from-blue-500 to-purple-600">
+            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
+              <Avatar className="w-32 h-32 border-4 border-white">
+                <AvatarImage
+                  src={user?.image || "/placeholder.svg?height=128&width=128"}
+                  alt={user?.username}
+                />
+                <AvatarFallback>
+                  {user?.username?.[0]?.toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
             </div>
           </div>
-        </div>
-      </nav>
+          <CardContent className="pt-20 pb-8 px-8">
+            <div className="text-center mb-6">
+              <h1 className="text-3xl font-bold">
+                {user?.fullName || user?.username}
+              </h1>
+              <p className="text-gray-600">
+                {user?.headline || "No headline provided"}
+              </p>
+            </div>
+            <div className="flex flex-wrap justify-center items-center gap-4 mb-6">
+              <div className="flex items-center">
+                <Briefcase className="w-5 h-5 mr-2 text-gray-500" />
+                <span>{user?.jobTitle || "No job title provided"}</span>
+              </div>
+              <div className="flex items-center">
+                <MapPin className="w-5 h-5 mr-2 text-gray-500" />
+                <span>{user?.location || "No location provided"}</span>
+              </div>
+            </div>
+            <p className="text-center max-w-2xl mx-auto">
+              {user?.bio || "No bio provided"}
+            </p>
+            {user && user.id && user.id.toString() === userId && (
+              <div className="mt-6 text-center">
+                <Button
+                  onClick={() => {
+                    /* Add functionality to edit profile */
+                  }}
+                  className="bg-blue-500 text-white hover:bg-blue-600 transition duration-300"
+                >
+                  Edit Profile
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
-      <div className="container border-solid border-2 mx-auto max-w-2xl my-auto ">
+      <div className="container border-solid bg-slate-300 border-2 mx-auto max-w-2xl my-auto ">
         {todos.length === 0 ? (
           <p className="text-center text-gray-500">No todos found.</p>
         ) : (
@@ -280,10 +282,7 @@ function Profile() {
                         <AvatarFallback>{todo.user.username[0]}</AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col">
-                        <p
-                          className="text-sm p-0 font-bold "
-                          
-                        >
+                        <p className="text-sm p-0 font-bold ">
                           {todo.user.username}
                         </p>
                         <p className="text-xs text-center font-extralight text-muted-foreground">
@@ -361,30 +360,29 @@ function Profile() {
         )}
       </div>
 
+      <Modal
+        isOpen={modal}
+        isClosed={handleCloseModal}
+        onSubmit={handleSubmit}
+        title="Create a New Needle"
+        submitText="Upload"
+        formData={formData}
+        handleInputChange={handleInputChange}
+        modalType="submit"
+      />
 
       <Modal
-          isOpen={modal}
-          isClosed={handleCloseModal}
-          onSubmit={handleSubmit}
-          title="Create a New Needle"
-          submitText="Upload"
-          formData={formData}
-          handleInputChange={handleInputChange}
-          modalType="submit"
-        />
+        isOpen={editModal}
+        isClosed={handleEditCloseModal}
+        onSubmit={handleEdit}
+        title="Edit Needle"
+        submitText="Update"
+        formData={formData}
+        handleInputChange={handleInputChange}
+        modalType="edit"
+      />
 
-        <Modal
-          isOpen={editModal}
-          isClosed={handleEditCloseModal}
-          onSubmit={handleEdit}
-          title="Edit Needle"
-          submitText="Update"
-          formData={formData}
-          handleInputChange={handleInputChange}
-          modalType="edit"
-        />
-
-        {/* <Modal
+      <Modal
           isOpen={deleteModal}
           onSubmit={handleDelete}
           isClosed={handleDeleteCloseModal}
@@ -394,7 +392,7 @@ function Profile() {
           handleInputChange={handleInputChange}
           readOnly={true}
           modalType="delete"
-        /> */}
+        />
     </>
   );
 }

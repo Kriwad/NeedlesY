@@ -1,18 +1,49 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useLocation } from 'react-router-dom';
 
-const Navbar = ({ user, onLogout, onOpenModal }) => {
+const Navbar = ({ onLogout, onOpenModal }) => {
+  const {userId} = useParams()
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const location = useLocation()
+  const isProfilePage =  userId ? location.pathname === `/profile/${userId}` : false;
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
-    // Implement search functionality here
+   
+  };
+  const [userData , setUserData] = useState({
+    username : "",
+    id : "" , 
+ 
+  })
+  
+  useEffect(()=> {
+    const storedUsername = localStorage.getItem("username")
+    const storedID = localStorage.getItem("user_id")
+   
+    if (storedUsername && storedID){
+      setUserData({username : storedUsername , id: storedID })
+    }
+
+  },[])
+
+  useEffect(() => {
+    console.log("Updated userData:", userData);
+  }, [userData]);
+  
+  const handleLogout = (e) => {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("username");
+    localStorage.removeItem("user_id");
+    navigate("/login/");
   };
 
   return (
@@ -21,7 +52,7 @@ const Navbar = ({ user, onLogout, onOpenModal }) => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <span className="text-2xl font-bold text-white">NeedlesY</span>
+            <span onClick={()=>navigate('/')} className="text-2xl font-bold text-white">NeedlesY</span>
             
           </div>
 
@@ -50,23 +81,23 @@ const Navbar = ({ user, onLogout, onOpenModal }) => {
             </button>
 
             {/* User Profile */}
-            {user ? (
+            {userData ? (
               <div className="flex items-center space-x-1">
-                <Avatar className="h-8 w-8 cursor-pointer" onClick={() => navigate(`profile/${user.id}`)}>
-                  <AvatarImage src={user.image || "/placeholder.svg?height=32&width=32"} alt={user.username} />
-                  <AvatarFallback>{user.username[0]}</AvatarFallback>
+                <Avatar className="h-8 w-8 cursor-pointer" onClick={() =>  {if (!isProfilePage) {navigate(`profile/${userData.id}`)}}}>
+                  <AvatarImage src={userData.image || "/placeholder.svg?height=32&width=32"} alt={userData.username} />
+                  <AvatarFallback>{userData.username[0]}</AvatarFallback>
                 </Avatar>
-                <span className="text-white hover:underline cursor-pointer" onClick={() => navigate(`profile/${user.id}`)}>
-                  {user.username}
+                <span className="text-white hover:underline cursor-pointer" onClick={() => {if (!isProfilePage) {navigate(`profile/${userData.id}`)}}}>
+                  {userData.username}
                 </span>
               </div>
             ) : (
-              <span className="text-white opacity-70">Guest</span>
+              <span className="text-white opacity-70"></span>
             )}
 
             {/* Logout Button */}
             <button
-              onClick={onLogout}
+              onClick={()=> handleLogout()}
               className="bg-white text-black font-semibold py-2 px-4 rounded-full hover:bg-blue-100 transition duration-300"
             >
               Logout

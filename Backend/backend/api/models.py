@@ -5,11 +5,12 @@ from django.utils import timezone
 
 
 
+
 class ToDoList(models.Model):
+
   title = models.CharField( max_length=30, null=True , blank = False )
   goal = models.TextField(null=True , blank = False)
   image = models.ImageField( upload_to='todoImage',null=True, blank=True,)
-  
   video= models.FileField(upload_to="todoVideos" , null = True , blank= True )
   created_at = models.DateTimeField( default=timezone.now)
   user = models.ForeignKey(User , on_delete=models.CASCADE ,related_name = "todolist" ,null = True)

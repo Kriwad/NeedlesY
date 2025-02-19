@@ -16,20 +16,19 @@ class UserSerializer(serializers.ModelSerializer):
     )
     return user  
 
-class DetailUserSerializer(serializers.ModelSerializer):
-  
-  class Meta:
 
+class DetailUserSerializer(serializers.ModelSerializer):
+  class Meta:
     model = User
     fields = ['id', 'username' ]
 
 class ToDoSerializer(serializers.ModelSerializer):
-  user = DetailUserSerializer(read_only = True)
+  user = DetailUserSerializer( read_only = True)
   class Meta:
     model= ToDoList
-    fields = ['id', 'user', 'title' , 'goal' , 'image', 'video', 'created_at']
+    fields = ['user' ,'id', 'title' , 'goal' , 'image', 'video', 'created_at']
     read_only_fields = ['user']
-
+ 
 
 #like and comment
 
