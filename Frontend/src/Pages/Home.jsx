@@ -209,7 +209,7 @@ function Home() {
   };
   return (
     <>
-      <div className="w-1vh h-1vh bg-gray-100">
+      <div className="w-1vh h-1vh bg-zinc-200">
         <Navbar
           
        
@@ -217,7 +217,7 @@ function Home() {
         />
 
         {/* Todo List Display */}
-        <div className="container border-solid border-2 bg-slate-300 mx-auto max-w-2xl my-auto ">
+        <div className="container mx-auto ">
           {todos.length === 0 ? (
             <p className="text-center text-gray-500">
               No Needles found. Add one!
@@ -226,7 +226,7 @@ function Home() {
             todos.map((todo) => (
               <div key={todo.id} className=" rounded-lg  transition-shadow">
                 <div className="container flex justify-center  border-solid mx-auto">
-                  <Card key={todo.id} className="mb-1 mt-0 w-full max-w-[90vw]">
+                  <Card key={todo.id} className="mw-full border-solid border-2  max-w-2xl mx-auto rounded-md overflow-hidden mb-2 w-full">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                       <div className="flex items-center gap-2 ">
                         <Avatar className="h-10 w-10">
