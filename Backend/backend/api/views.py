@@ -1,24 +1,27 @@
-from django.contrib.auth.models import User
+
 from .serializer import UserSerializer , ToDoSerializer ,DetailUserSerializer , CommentSerializer , LikeSerializer
-from .models import ToDoList , Comment , Like
+from .models import CustomUser , ToDoList , Comment , Like
 from rest_framework.permissions import AllowAny , IsAuthenticated , IsAdminUser 
 from rest_framework import generics , viewsets
 
 #creates user
 class CreateUserView(generics.CreateAPIView):
-  queryset = User.objects.all()
+  queryset = CustomUser.objects.all()
   serializer_class = UserSerializer
   permission_classes = [AllowAny]
+  def create(self, request, *args, **kwargs):
+        print("Received data:", request.data)
+        return super().create(request, *args, **kwargs)
 
 # only admin
 class ListUserView(generics.ListAPIView):
-  queryset = User.objects.all()
+  queryset = CustomUser.objects.all()
   serializer_class = UserSerializer
-  permission_classes= [IsAdminUser]
+  permission_classes= [AllowAny]
 
 # only admin
 class ListActiveUserView(generics.ListAPIView):
-  queryset = User.objects.filter(is_active= True)
+  queryset = CustomUser.objects.filter(is_active= True)
   serializer_class = UserSerializer
   permission_classes= [IsAdminUser]
 
@@ -67,7 +70,7 @@ class DetailUserView(generics.RetrieveAPIView):
 
   def get_queryset(self):
     user_id = self.kwargs["id"]
-    return User.objects.filter(id = user_id)
+    return CustomUser.objects.filter(id = user_id)
 
 # lists the users profile todos
 class ListUserToDoView(generics.ListAPIView):

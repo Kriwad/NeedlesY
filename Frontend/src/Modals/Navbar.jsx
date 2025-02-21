@@ -7,8 +7,8 @@ import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useLocation } from 'react-router-dom';
 
-const Navbar = ({ onLogout, onOpenModal }) => {
-  const {userId} = useParams()
+const Navbar = ({ onOpenModal }) => {
+  const { userId } = useParams()
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const location = useLocation()
@@ -19,20 +19,22 @@ const Navbar = ({ onLogout, onOpenModal }) => {
    
   };
   const [userData , setUserData] = useState({
-    username : "",
+    username:"",
+    fullname : "",
     id : "" , 
  
   })
   
   useEffect(()=> {
+    const storedFullname = localStorage.getItem("fullname")
     const storedUsername = localStorage.getItem("username")
     const storedID = localStorage.getItem("user_id")
    
-    if (storedUsername && storedID){
-      setUserData({username : storedUsername , id: storedID })
-    }
+    if (storedFullname && storedID && storedUsername){
+      setUserData({fullname : storedFullname , id: storedID  , username : storedUsername})
+    
 
-  },[])
+  }},[])
 
   useEffect(() => {
     console.log("Updated userData:", userData);
@@ -42,6 +44,7 @@ const Navbar = ({ onLogout, onOpenModal }) => {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
     localStorage.removeItem("username");
+    localStorage.removeItem("fullname");
     localStorage.removeItem("user_id");
     navigate("/login/");
   };
@@ -84,8 +87,8 @@ const Navbar = ({ onLogout, onOpenModal }) => {
             {userData ? (
               <div className="flex items-center space-x-1">
                 <Avatar className="h-8 w-8 cursor-pointer" onClick={() =>  {if (!isProfilePage) {navigate(`profile/${userData.id}`)}}}>
-                  <AvatarImage src={userData.image || "/placeholder.svg?height=32&width=32"} alt={userData.username} />
-                  <AvatarFallback>{userData.username[0]}</AvatarFallback>
+                  <AvatarImage src={userData.image || "/placeholder.svg?height=32&width=32"} alt={userData.fullname} />
+                  <AvatarFallback>{userData.fullname[0]}</AvatarFallback>
                 </Avatar>
                 <span className="text-white hover:underline cursor-pointer" onClick={() => {if (!isProfilePage) {navigate(`profile/${userData.id}`)}}}>
                   {userData.username}

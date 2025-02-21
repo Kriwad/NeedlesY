@@ -238,13 +238,14 @@ function Home() {
                             alt={todo.user.username}
                           />
                           <AvatarFallback>
-                            {todo.user.username[0]}
+                            {todo.user.fullname[0]}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
                           <p
                             className="text-sm p-0 font-bold  hover:underline cursor-pointer "
                             onClick={() => navigate(`profile/${todo.user.id}`)}
+                            
                           >
                             {todo.user.username}
                           </p>

@@ -202,38 +202,30 @@ function Profile() {
         <div className="container mx-auto mb-5 ">
           <Card className="w-full border-solid border-2  max-w-4xl mx-auto rounded-md mb-0 overflow-hidden">
             <div className="relative h-48 bg-gradient-to-r from-slate-300 to-slate-300">
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
-                <Avatar className="w-32 h-32 border-4 border-white">
+              <div className="absolute bottom-5 left-[90px] transform -translate-x-10 translate-y-1/2">
+                <Avatar className="w-[150px] h-[150px] border-4 border-white">
                   <AvatarImage
                     src={user?.image || "/placeholder.svg?height=128&width=128"}
-                    alt={user?.username}
+                    alt={user?.fullname}
                   />
                   <AvatarFallback>
-                    {user?.username?.[0]?.toUpperCase()}
+                    {user?.fullname?.[0]?.toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </div>
             </div>
             <CardContent className="pt-20 pb-8 px-8">
-              <div className="text-center mb-6">
-                <h1 className="text-3xl font-bold">
-                  {user?.fullName || user?.username}
+              <div className="text-start mb-6 ml-5">
+                <h1 className="text-3xl font-bold ">
+                  {user?.fullname}
                 </h1>
-                <p className="text-gray-600">
-                  {user?.headline || "No headline provided"}
-                </p>
+                <h1 className="mt-2 text-[20px] font-thin">
+                  @{ user?.username}
+                </h1>
+                
               </div>
-              <div className="flex flex-wrap justify-center items-center gap-4 mb-6">
-                <div className="flex items-center">
-                  <Briefcase className="w-5 h-5 mr-2 text-gray-500" />
-                  <span>{user?.jobTitle || "No job title provided"}</span>
-                </div>
-                <div className="flex items-center">
-                  <MapPin className="w-5 h-5 mr-2 text-gray-500" />
-                  <span>{user?.location || "No location provided"}</span>
-                </div>
-              </div>
-              <p className="text-center max-w-2xl mx-auto">
+  
+              <p className="text-start  ml-6">
                 {user?.bio || "No bio provided"}
               </p>
               {user &&
@@ -273,10 +265,10 @@ function Profile() {
                               todo.user.image ||
                               "/placeholder.svg? height=40&width=40"
                             }
-                            alt={todo.user.username}
+                            alt={todo.user.fullname}
                           />
                           <AvatarFallback>
-                            {todo.user.username[0]}
+                            {todo.user.fullname[0]}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
