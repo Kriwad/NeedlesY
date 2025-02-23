@@ -14,7 +14,7 @@ class CreateUserView(generics.CreateAPIView):
 class ListUserView(generics.ListAPIView):
   queryset = CustomUser.objects.all()
   serializer_class = UserSerializer
-  permission_classes= [AllowAny]
+  permission_classes= [IsAdminUser]
 
 # only admin
 class ListActiveUserView(generics.ListAPIView):
@@ -45,7 +45,7 @@ class CreateToDoListView(generics.CreateAPIView):
 #lists all todo for home page
 class ListTodoView(generics.ListAPIView):
   serializer_class = ToDoSerializer
-  permission_classes = [AllowAny]
+  permission_classes = [IsAuthenticated]
 
   def get_queryset(self):
    return ToDoList.objects.all().order_by("-created_at")
@@ -57,7 +57,7 @@ class ListTodoView(generics.ListAPIView):
 class EditToDoListView(generics.RetrieveUpdateDestroyAPIView):
  
   serializer_class = ToDoSerializer
-  permission_classes = [AllowAny]
+  permission_classes = [IsAuthenticated]
 
   def get_queryset(self):   
     return ToDoList.objects.filter(user = self.request.user )
@@ -65,7 +65,7 @@ class EditToDoListView(generics.RetrieveUpdateDestroyAPIView):
 #fetches and edit the clicked user
 class DetailUserView(generics.RetrieveUpdateDestroyAPIView):
   serializer_class = DetailUserSerializer
-  permission_classes = [AllowAny]
+  permission_classes = [IsAuthenticated]
   lookup_field = "id"
 
   def get_queryset(self):
@@ -78,7 +78,7 @@ class DetailUserView(generics.RetrieveUpdateDestroyAPIView):
 class ListUserToDoView(generics.ListAPIView):
  
   serializer_class = ToDoSerializer
-  permission_classes = [AllowAny]
+  permission_classes = [IsAuthenticated]
  
 
   def get_queryset(self):   

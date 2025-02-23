@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/Components/ui/card";
 
-import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
+import { Heart, MessageCircle} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,13 +13,13 @@ import Navbar from "../Modals/Navbar";
 
 import { useState } from "react";
 import api from "../api";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEllipsisV,
   faEdit,
   faTrash,
-  faEye,
+  
 } from "@fortawesome/free-solid-svg-icons";
 
 import Modal from "../Modals/Modal";

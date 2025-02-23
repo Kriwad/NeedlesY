@@ -20,7 +20,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/Components/ui/dropdown";
-import { use } from "react";
 
 function Profile() {
   const { userId } = useParams();
