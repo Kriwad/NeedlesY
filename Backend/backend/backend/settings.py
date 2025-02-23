@@ -27,7 +27,12 @@ SECRET_KEY = 'django-insecure-8@ro5y!4hxbrdlyvk%n#1ucpxvnsksb0#lt0rk@9#uhs@l+ve6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [".vercel.app", "127.0.0.1" , "https://needles-y--three.vercel.app"]
+ALLOWED_HOSTS = [
+    ".vercel.app",
+    "127.0.0.1" ,
+    "https://needles-y--three.vercel.app",
+    "needles-y.vercel.app",
+    "needles-y-kriwads-projects.vercel.app",]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -136,16 +141,24 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-CORS_ALLOW_ALL_ORIGINS = ["https://needles-y--three.vercel.app",]
+CORS_ALLOW_ALL_ORIGINS = [
+    "https://needles-y--three.vercel.app",
+    "https://needles-y.vercel.app",
+    "https://needles-y-kriwads-projects.vercel.app",]
 CORS_ALLOW_CREDENTIALS = True
 AUTH_USER_MODEL = 'api.CustomUser'
+
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret-key-for-dev')
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
