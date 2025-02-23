@@ -9,9 +9,6 @@ class CreateUserView(generics.CreateAPIView):
   queryset = CustomUser.objects.all()
   serializer_class = UserSerializer
   permission_classes = [AllowAny]
-  def create(self, request, *args, **kwargs):
-        print("Received data:", request.data)
-        return super().create(request, *args, **kwargs)
 
 # only admin
 class ListUserView(generics.ListAPIView):
@@ -54,6 +51,9 @@ class ListTodoView(generics.ListAPIView):
    return ToDoList.objects.all().order_by("-created_at")
 
 # helps in editing and updating todos
+
+
+
 class EditToDoListView(generics.RetrieveUpdateDestroyAPIView):
  
   serializer_class = ToDoSerializer
@@ -62,8 +62,8 @@ class EditToDoListView(generics.RetrieveUpdateDestroyAPIView):
   def get_queryset(self):   
     return ToDoList.objects.filter(user = self.request.user )
 
-#fetches the clicked user
-class DetailUserView(generics.RetrieveAPIView):
+#fetches and edit the clicked user
+class DetailUserView(generics.RetrieveUpdateDestroyAPIView):
   serializer_class = DetailUserSerializer
   permission_classes = [AllowAny]
   lookup_field = "id"
@@ -71,6 +71,8 @@ class DetailUserView(generics.RetrieveAPIView):
   def get_queryset(self):
     user_id = self.kwargs["id"]
     return CustomUser.objects.filter(id = user_id)
+  
+
 
 # lists the users profile todos
 class ListUserToDoView(generics.ListAPIView):

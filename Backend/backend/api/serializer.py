@@ -8,7 +8,7 @@ from .models import CustomUser , ToDoList , Like  , Comment
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
     model = CustomUser
-    fields = fields = ['id', 'username', 'password', 'email', 'first_name', 'middle_name', 'last_name', 'fullname']
+    fields = fields = ['id', 'username', 'password', 'email', 'first_name', 'middle_name', 'last_name', 'fullname', 'image' ]
     extra_kwargs = {'password': {'write_only': True}}
   
   def validate_username(self, value):
@@ -55,7 +55,7 @@ class UserSerializer(serializers.ModelSerializer):
 class DetailUserSerializer(serializers.ModelSerializer):
   class Meta:
     model = CustomUser
-    fields = ['id', 'username'  , "first_name" , 'middle_name', "last_name" , 'fullname' ]
+    fields = ['id', 'username'  , "first_name" , 'middle_name', "last_name" , 'fullname' , 'image', 'bio' ]
 
 class ToDoSerializer(serializers.ModelSerializer):
   user = DetailUserSerializer( read_only = True)

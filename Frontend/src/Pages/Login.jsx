@@ -37,6 +37,8 @@ const Login = () => {
       localStorage.setItem("user_id", userRes.data.id)
       localStorage.setItem("fullname", userRes.data.fullname)
       localStorage.setItem("username", userRes.data.username)
+      localStorage.setItem("image", userRes.data.image)
+      console.log(userRes.data)
       navigate("/")
       
 

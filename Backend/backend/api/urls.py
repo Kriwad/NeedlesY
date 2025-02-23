@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import CreateUserView,ListActiveUserView, ListUserView , CreateToDoListView , EditToDoListView ,ListTodoView , CurrentUserView ,DetailUserView , ListUserToDoView
+from .views import CreateUserView,ListActiveUserView, ListUserView , CreateToDoListView , EditToDoListView ,ListTodoView , CurrentUserView ,DetailUserView, ListUserToDoView
 
 
 
@@ -15,8 +15,9 @@ urlpatterns = [
     
 
     path('user/profile/<int:id>/', DetailUserView.as_view(), name='users_nameid'),
-    path('user/profile/todos/<int:user_id>/',ListUserToDoView.as_view(), name='users_todo'),
    
+    path('user/profile/todos/<int:user_id>/',ListUserToDoView.as_view(), name='users_todo'),
+    
 ]
 
 

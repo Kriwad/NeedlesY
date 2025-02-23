@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/Components/ui/card";
-import { Button } from "@/Components/ui/button";
+
 import { Heart, MessageCircle, MoreHorizontal } from "lucide-react";
 import {
   DropdownMenu,
@@ -21,11 +21,11 @@ import {
   faTrash,
   faEye,
 } from "@fortawesome/free-solid-svg-icons";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+
 import Modal from "../Modals/Modal";
 
 import { formatDistanceToNow, set } from "date-fns";
-import { ACCESS_TOKEN } from "../constants";
+
 
 function Home() {
   const [modal, setModal] = useState(false);
@@ -232,7 +232,7 @@ function Home() {
                         <Avatar className="h-10 w-10">
                           <AvatarImage
                             src={
-                              todo.image ||
+                              todo.user.image ||
                               "/placeholder.svg? height=40&width=40"
                             }
                             alt={todo.user.username}

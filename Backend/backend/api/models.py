@@ -9,16 +9,20 @@ class CustomUser(AbstractUser):
    
     middle_name = models.CharField(max_length=15, null = True , blank=True)
     image = models.ImageField(upload_to="Profilepictures" , blank= True )
+    bio = models.CharField(max_length= 75 , blank=True , null = True)
+    fullname = models.CharField(max_length=30 , blank = True , null = True )
     groups = models.ManyToManyField('auth.Group', related_name='user_set_api', blank=True)
     user_permissions = models.ManyToManyField('auth.Permission', related_name='user_set_api', blank=True)
+
+    def save(self , *args , **kwargs):
+      self.fullname = f"{self.first_name} {self.last_name}".strip()
+      super().save(*args , **kwargs)
+
     def __str__(self):
         return self.username
     
     
-    @property
-    def fullname(self):
-       name_part = [self.first_name , self.middle_name , self.last_name]
-       return " ".join(part for part in name_part if part)
+   
 
 class ToDoList(models.Model):
 

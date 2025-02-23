@@ -1,395 +1,352 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import api from "../api";
-import { useParams, useNavigate, Form } from "react-router-dom";
-import { parseISO } from "date-fns";
+
+
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEllipsisV,
-  faEdit,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisV, faEdit, faTrash, faPencil } from "@fortawesome/free-solid-svg-icons";
+import { Heart, MessageCircle } from "lucide-react";
+
 import Navbar from "../Modals/Navbar";
-import { faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
+import Modal from "../Modals/Modal";
+import UsernameModal from "../Modals/UsernameModal";
+import api from "../api";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/Components/ui/card";
-import { Button } from "@/Components/ui/button";
-
-import { Heart, MessageCircle, Briefcase, MapPin } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/Components/ui/dropdown";
-import Modal from "../Modals/Modal";
-
-import { formatDistanceToNow, set } from "date-fns";
+import { use } from "react";
 
 function Profile() {
   const { userId } = useParams();
-  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+ 
 
+  // States
+  const [user, setUser] = useState({
+    fullname: "",
+    username: "",
+    image: null,
+    bio: "",
+  });
+  
+  const [currentUser , setCurrentUser] = useState("")
   const [todos, setTodos] = useState([]);
+  const [selectedTodo, setSelectedTodo] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     goal: "",
     image: null,
     video: null,
   });
-  const [modal, setModal] = useState(false);
-  const [selectTodo, setSelectTodo] = useState("");
-  const [editModal, setEditModal] = useState(false);
-  const [deleteModal, setDeleteModal] = useState(false);
-  const [search, setSearch] = useState("");
-  const navigate = useNavigate();
 
-  const resetForm = () => {
-    setFormData({
-      title: "",
-      goal: "",
-      image: null,
-      video: null,
-    });
-  };
+  // Modal states
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
-  const handleInputChange = (e) => {
+  // Input handlers
+  const handleFormChange = (e) => {
     const { name, value, type, files } = e.target;
-    if (type === "file") {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: files[0],
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+    if (type === "file"){
+      setFormData((prev)=>({
+        ...prev , [name] : files[0]
+      }))
+    }else{
+      setFormData((prev)=>({
+        ...prev , [name]: value,
+      }))
     }
   };
 
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
-  };
-
-  // Handles Posting modal
-  const handleModalOpen = () => {
-    resetForm();
-    setModal(true);
-  };
-  const handleCloseModal = () => {
-    setModal(false);
-    resetForm();
-  };
-
-  // handles edit modal
-  const handleEditOpenModal = (todo) => {
-    setEditModal(true);
-    setSelectTodo(todo);
-
-    setFormData({
-      title: todo.title,
-      goal: todo.goal,
-    });
-  };
-  const handleDeleteOpenModal = (todo) => {
-    resetForm();
-    setDeleteModal(true);
-    setSelectTodo(todo);
-    setFormData({
-      title: todo.title,
-      goal: todo.goal,
-    });
-  };
-  const handleDeleteCloseModal = () => {
-    setDeleteModal(false);
-    resetForm();
-  };
-  const handleEditCloseModal = () => {
-    setEditModal(false);
-    resetForm();
-  };
-  // handles edit
-  const handleEdit = async (e) => {
-    e.preventDefault();
-    const formDataToSend = new FormData();
-    formDataToSend.append("title", formData.title);
-    formDataToSend.append("goal", formData.goal);
-    if (formData.image) {
-      formDataToSend.append("image", formData.image);
-    }
-    if (formData.video) {
-      formDataToSend.append("video", formData.video);
-    }
-
-    try {
-      await api.put(`/api/user/todo/edit/${selectTodo.id}/`, formDataToSend);
-      await fetchtodos();
-      handleEditCloseModal();
-    } catch (error) {
-      console.log("error: ", error);
+  const handleProfileChange = (e) => {
+    const { name, value, type, files } = e.target;
+   
+    if (type === "file"){
+      setUser((prev)=>({
+        ...prev , [name] : files[0]
+      }))
+    }else{
+      setUser((prev)=>({
+        ...prev , [name]: value,
+      }))
     }
   };
+  //handles close profile
+ 
 
-  const handleDelete = async (e) => {
-    e.preventDefault();
-    try {
-      await api.delete(`/api/user/todo/edit/${selectTodo.id}/`, formData);
-      await fetchtodos();
-      handleDeleteCloseModal();
-    } catch (error) {
-      console.log("error: ", error);
-    }
-  };
-
-  // fetches user
+  // API calls
   const fetchUser = async () => {
     try {
       const response = await api.get(`api/user/profile/${userId}`);
-      console.log(response.data);
-
       setUser(response.data);
     } catch (error) {
-      console.log("error:", error);
+      console.error("Error fetching user:", error);
     }
   };
+  const fetchCurrentUser = async ()=>{
+    try {
+      const response = await api.get('api/user/current/');
+      setCurrentUser(response.data.id)
+    }catch(error){
+      console.log("error" , error)
+    }
+  }
 
-  // fetch todos
-  const fetchtodos = async () => {
+  const fetchTodos = async () => {
     try {
       const response = await api.get(`api/user/profile/todos/${userId}`);
-      console.log(response.data);
       setTodos(response.data);
     } catch (error) {
-      console.log("error: ", error);
+      console.error("Error fetching todos:", error);
     }
   };
 
-  const handleSubmit = async (e) => {
+  // Form submissions
+  const handleCreateTodo = async (e) => {
     e.preventDefault();
     const formDataToSend = new FormData();
-    formDataToSend.append("title", formData.title);
-    formDataToSend.append("goal", formData.goal);
-    if (formData.image) {
-      formDataToSend.append("image", formData.image);
+    formDataToSend.append("title" , formData.title)
+    formDataToSend.append("goal" , formData.goal)
+    if (formData.image){
+      formDataToSend.append("image" , formData.image)
+
     }
-    if (formDataToSend.video) {
-      formDataToSend.append("video", formData.video);
+    if (formData.video){
+      formDataToSend.append("video" , formData.video)
     }
 
     try {
       await api.post(`api/user/todo/`, formDataToSend);
-      await fetchtodos();
-      handleCloseModal();
+      await fetchTodos();
+      setShowCreateModal(false);
+      setFormData({ title: "", goal: "", image: null, video: null });
     } catch (error) {
-      console.log("error: ", error);
+      console.error("Error creating todo:", error);
+    }
+  };
+
+  const handleEditTodo = async (e) => {
+    e.preventDefault();
+    const formDataToSend = new FormData();
+    formDataToSend.append("title" , formData.title)
+    formDataToSend.append("goal" , formData.goal)
+    if (formData.image){
+      formDataToSend.append("image" , formData.image)
+
+    }
+    if (formData.video){
+      formDataToSend.append("video" , formData.video)
+    }
+    try {
+      await api.put(`/api/user/todo/edit/${selectedTodo.id}/`, formDataToSend);
+      await fetchTodos();
+      setShowEditModal(false);
+      setSelectedTodo(null);
+    } catch (error) {
+      console.error("Error updating todo:", error);
+    }
+  };
+
+  const handleDeleteTodo = async (e) => {
+    e.preventDefault();
+    try {
+      await api.delete(`/api/user/todo/edit/${selectedTodo.id}/`);
+      await fetchTodos();
+      setShowDeleteModal(false);
+      setSelectedTodo(null);
+    } catch (error) {
+      console.error("Error deleting todo:", error);
+    }
+  };
+
+  const handleProfileEdit = async (e) => {
+    e.preventDefault();
+    const formDataToSend = new FormData();
+    formDataToSend.append("fullnaame" , user.fullname)
+    formDataToSend.append("username" , user.username)
+    formDataToSend.append("bio" , user.bio)
+    if (user.image instanceof File){
+      formDataToSend.append("image" , user.image)
+
+    }
+
+    try {
+      await api.put(`api/user/profile/${userId}/`, formDataToSend);
+      await fetchUser();
+      
+      setShowProfileModal(false);
+    } catch (error) {
+      console.error("Error updating profile:", error);
     }
   };
 
   useEffect(() => {
-    fetchtodos();
     fetchUser();
-    console.log("user", user);
-    console.log("userId from URL", userId);
-  }, [userId]);
-  console.log(user, userId);
+    fetchCurrentUser();
+    fetchTodos();
+  }, []);
 
   return (
-    <>
-      <div className="w-1vh h-1vh bg-zinc-200">
-        <Navbar onOpenModal={handleModalOpen} />
-        {/* Profile Header */}
-        <div className="container mx-auto mb-5 ">
-          <Card className="w-full border-solid border-2  max-w-4xl mx-auto rounded-md mb-0 overflow-hidden">
-            <div className="relative h-48 bg-gradient-to-r from-slate-300 to-slate-300">
-              <div className="absolute bottom-5 left-[90px] transform -translate-x-10 translate-y-1/2">
-                <Avatar className="w-[150px] h-[150px] border-4 border-white">
-                  <AvatarImage
-                    src={user?.image || "/placeholder.svg?height=128&width=128"}
-                    alt={user?.fullname}
-                  />
-                  <AvatarFallback>
-                    {user?.fullname?.[0]?.toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+    <div className="w-1vh h-1vh bg-zinc-200">
+      <Navbar onOpenModal={() => setShowCreateModal(true)} />
+      
+      {/* Profile Card */}
+      <div className="container mx-auto mb-5">
+        <Card className="w-full border-2 max-w-4xl mx-auto rounded-md">
+          <div className="relative h-48 bg-gradient-to-r from-slate-300 to-slate-300">
+            <Avatar
+              className="absolute top-10 left-24 transform -translate-x-1/2 translate-y-1/2 w-32 h-32 border-4 border-white"
+              onClick={user && user.id === currentUser ? () => navigate("/") : undefined}
+            >
+              <AvatarImage src={user?.image || "/placeholder.svg"} alt={user?.fullname} />
+              <AvatarFallback>{user?.fullname?.[0]?.toUpperCase()}</AvatarFallback>
+            </Avatar>
+          </div>
+          
+          <CardContent className="pt-20 px-8">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h1 className="text-3xl font-bold">{user?.fullname}</h1>
+                <p className="text-xl text-gray-600">@{user?.username}</p>
               </div>
+              {user && user.id === currentUser && (
+                <button
+                  onClick={() => setShowProfileModal(true)}
+                  className="text-gray-600 hover:text-black"
+                >
+                  <FontAwesomeIcon icon={faPencil} />
+                </button>
+              )}
             </div>
-            <CardContent className="pt-20 pb-8 px-8">
-              <div className="text-start mb-6 ml-5">
-                <h1 className="text-3xl font-bold ">
-                  {user?.fullname}
-                </h1>
-                <h1 className="mt-2 text-[20px] font-thin">
-                  @{ user?.username}
-                </h1>
-                
-              </div>
-  
-              <p className="text-start  ml-6">
-                {user?.bio || "No bio provided"}
-              </p>
-              {user &&
-                user.id &&
-                user.id.toString() === localStorage.getItem("user_id") && (
-                  <div className="mt-6 text-center">
-                    <Button
-                      onClick={() => {
-                        /* Add functionality to edit profile */
-                      }}
-                      className="bg-blue-500 text-white hover:bg-blue-600 transition duration-300"
-                    >
-                      Edit Profile
-                    </Button>
-                  </div>
-                )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="container mx-auto  ">
-          {todos.length === 0 ? (
-            <p className="text-center text-gray-500">No todos found.</p>
-          ) : (
-            todos.map((todo) => (
-              <div key={todo.id} className=" rounded-lg  transition-shadow">
-                <div className="container flex justify-center  border-solid mx-auto">
-                  <Card
-                    key={todo.id}
-                    className="w-full border-solid border-2  max-w-4xl mx-auto rounded-md overflow-hidden mb-2 "
-                  >
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <div className="flex items-center gap-2 ">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage
-                            src={
-                              todo.user.image ||
-                              "/placeholder.svg? height=40&width=40"
-                            }
-                            alt={todo.user.fullname}
-                          />
-                          <AvatarFallback>
-                            {todo.user.fullname[0]}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col">
-                          <p className="text-sm p-0 font-bold ">
-                            {todo.user.username}
-                          </p>
-                          <p className="text-xs text-center font-extralight text-muted-foreground">
-                            {todo.created_at &&
-                              formatDistanceToNow(new Date(todo.created_at), {
-                                addSuffix: true,
-                              })}
-                          </p>
-                        </div>
-                      </div>
-                      {user && user.username === todo.user.username && (
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <button className="h-8 w-8">
-                              <FontAwesomeIcon
-                                icon={faEllipsisV}
-                                className="h-4 w-4"
-                              />
-                            </button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => handleEditOpenModal(todo)}
-                            >
-                              <FontAwesomeIcon icon={faEdit} className="mr-2" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => handleDeleteOpenModal(todo)}
-                              className="text-red-600"
-                            >
-                              <FontAwesomeIcon
-                                icon={faTrash}
-                                className="mr-2"
-                              />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      )}
-                    </CardHeader>
-                    <CardContent className="pb-4">
-                      <h3 className="text-lg font-semibold mt-2">
-                        {todo.title}
-                      </h3>
-                      <p className="text-sm w-[95%] text-muted-foreground whitespace-pre-wrap mt-1 break-words">
-                        {todo.goal}
-                      </p>
-                      {todo.image && (
-                        <img
-                          src={todo.image}
-                          onClick={() => handleImageClick(todo.image)}
-                          className="mt-2 w-full rounded-lg"
-                          alt=""
-                        />
-                      )}
-                      {todo.video && (
-                        <video controls className="mt-2 w-full rounded-lg">
-                          <source src={todo.video} type="video/mp4" />
-                          Your browser does not support the video tag
-                        </video>
-                      )}
-                      <div className="mt-4 flex justify-end gap-2">
-                        <button className="text-primary">
-                          <Heart className="mr-5 h-4 w-4" />
-                        </button>
-                        <button
-                          variant="ghost"
-                          size="sm"
-                          className="text-primary"
-                        >
-                          <MessageCircle className="mr-5 h-4 w-4" />
-                        </button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        <Modal
-          isOpen={modal}
-          isClosed={handleCloseModal}
-          onSubmit={handleSubmit}
-          title="Create a New Needle"
-          submitText="Upload"
-          formData={formData}
-          handleInputChange={handleInputChange}
-          modalType="submit"
-        />
-
-        <Modal
-          isOpen={editModal}
-          isClosed={handleEditCloseModal}
-          onSubmit={handleEdit}
-          title="Edit Needle"
-          submitText="Update"
-          formData={formData}
-          handleInputChange={handleInputChange}
-          modalType="edit"
-        />
-
-        <Modal
-          isOpen={deleteModal}
-          onSubmit={handleDelete}
-          isClosed={handleDeleteCloseModal}
-          title="Delete Needle"
-          submitText="Discard"
-          formData={formData}
-          handleInputChange={handleInputChange}
-          readOnly={true}
-          modalType="delete"
-        />
+            <p className="text-gray-700">{user?.bio || "No bio provided"}</p>
+          </CardContent>
+        </Card>
       </div>
-    </>
+
+      {/* Todos List */}
+      <div className="container mx-auto">
+        {todos.length === 0 ? (
+          <p className="text-center text-gray-500">No todos found.</p>
+        ) : (
+          todos.map(todo => (
+            <Card key={todo.id} className="max-w-4xl mx-auto mb-4 border-2">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={todo.user.image || "/placeholder.svg"} />
+                    <AvatarFallback>{todo.user.fullname[0]}</AvatarFallback>
+                  </Avatar>
+                  <div  >
+                    <p className="font-semibold">{todo.user.username}</p>
+                    <p className="text-sm text-gray-500">
+                      {formatDistanceToNow(new Date(todo.created_at), { addSuffix: true })}
+                    </p>
+                  </div>
+                </div>
+
+                {user && currentUser === user.id && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <FontAwesomeIcon icon={faEllipsisV} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem onClick={() => {
+                        setSelectedTodo(todo);
+                        setFormData({ title: todo.title, goal: todo.goal });
+                        setShowEditModal(true);
+                      }}>
+                        <FontAwesomeIcon icon={faEdit} className="mr-2" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => {
+                          setSelectedTodo(todo);
+                          setShowDeleteModal(true);
+                        }}
+                        className="text-red-600"
+                      >
+                        <FontAwesomeIcon icon={faTrash} className="mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </CardHeader>
+
+              <CardContent>
+                <h3 className="text-lg mt-5 font-semibold">{todo.title}</h3>
+                <p className="text-gray-700 mt-2">{todo.goal}</p>
+                {todo.image && (
+                  <img src={todo.image} alt="" className="mt-4 rounded-lg w-full" />
+                )}
+                {todo.video && (
+                  <video controls className="mt-4 rounded-lg w-full">
+                    <source src={todo.video} type="video/mp4" />
+                  </video>
+                )}
+                <div className="flex justify-end gap-4 mt-4">
+                  <button><Heart className="h-5 w-5" /></button>
+                  <button><MessageCircle className="h-5 w-5" /></button>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Modals */}
+      <UsernameModal
+        isOpen={showProfileModal}
+        isClosed={()=> setShowProfileModal(false)}
+        onSubmit={handleProfileEdit}
+        title="Edit Profile"
+        submitText="Save"
+        formData={user}
+        handleInputChange={handleProfileChange}
+        modalType="edit"
+      />
+
+      <Modal
+        isOpen={showCreateModal}
+        isClosed={() => setShowCreateModal(false)}
+        onSubmit={handleCreateTodo}
+        title="Create New Todo"
+        submitText="Create"
+        formData={formData}
+        handleInputChange={handleFormChange}
+        modalType="submit"
+      />
+
+      <Modal
+        isOpen={showEditModal}
+        isClosed={() => setShowEditModal(false)}
+        onSubmit={handleEditTodo}
+        title="Edit Todo"
+        submitText="Update"
+        formData={formData}
+        handleInputChange={handleFormChange}
+        modalType="edit"
+      />
+
+      <Modal
+        isOpen={showDeleteModal}
+        isClosed={() => setShowDeleteModal(false)}
+        onSubmit={handleDeleteTodo}
+        title="Delete Todo"
+        submitText="Delete"
+        formData={formData}
+        handleInputChange={handleFormChange}
+        readOnly={true}
+        modalType="delete"
+      />
+    </div>
   );
 }
 
