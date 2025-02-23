@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-8@ro5y!4hxbrdlyvk%n#1ucpxvnsksb0#lt0rk@9#uhs@l+ve6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [".vercel.app", "127.0.0.1" , "https://needles-y--three.vercel.app/register"]
+ALLOWED_HOSTS = [".vercel.app", "127.0.0.1" , "https://needles-y--three.vercel.app"]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -143,7 +143,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-CORS_ALLOW_ALL_ORIGINS = ["https://needles-y--three.vercel.app/register",]
+CORS_ALLOW_ALL_ORIGINS = ["https://needles-y--three.vercel.app",]
 CORS_ALLOW_CREDENTIALS = True
 AUTH_USER_MODEL = 'api.CustomUser'
 
