@@ -4,8 +4,8 @@ import React, { useEffect, useState  } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch ,faBars } from '@fortawesome/free-solid-svg-icons';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
+import { Sheet, SheetContent, SheetTrigger } from "@/Components/ui/sheet"
 import { useLocation } from 'react-router-dom';
 import api from '../api';
 
