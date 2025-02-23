@@ -28,11 +28,11 @@ SECRET_KEY = 'django-insecure-8@ro5y!4hxbrdlyvk%n#1ucpxvnsksb0#lt0rk@9#uhs@l+ve6
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    ".vercel.app",
+    
     "127.0.0.1" ,
-    "https://needles-y--three.vercel.app",
+    
     "needles-y.vercel.app",
-    "needles-y-kriwads-projects.vercel.app",]
+  ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -64,8 +64,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -151,8 +151,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = [
     "https://needles-y--three.vercel.app",
-    "https://needles-y.vercel.app",
-    "https://needles-y-kriwads-projects.vercel.app",]
+    ]
 CORS_ALLOW_CREDENTIALS = True
 AUTH_USER_MODEL = 'api.CustomUser'
 
