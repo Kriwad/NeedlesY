@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import os
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,12 +28,7 @@ SECRET_KEY = 'django-insecure-8@ro5y!4hxbrdlyvk%n#1ucpxvnsksb0#lt0rk@9#uhs@l+ve6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    
-    "127.0.0.1" ,
-    
-    "needles-y.vercel.app",
-  ]
+ALLOWED_HOSTS = ["*"]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -51,7 +47,7 @@ SIMPLE_JWT = {
 # Application definition
 
 INSTALLED_APPS = [
-    'corsheaders',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -59,7 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api',
-    
+    'corsheaders',
     'rest_framework',
 ]
 
@@ -152,14 +148,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CORS_ALLOW_ALL_ORIGINS = True
-
+CORS_ALLOWS_CREDENTIALS = True
 
 
 
 AUTH_USER_MODEL = 'api.CustomUser'
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'your-default-secret-key-for-dev')
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 
 MEDIA_URL = '/media/'
