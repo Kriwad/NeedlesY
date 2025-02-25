@@ -1,9 +1,12 @@
 {
     "routes": [
       {
+        "src": "/api/(.*)",
+        "dest": "/Backend/backend/$1"
+      },
+      {
         "src": "/[^.]+",
-        "dest": "/",
-        "status": 200
+        "dest": "/Frontend"
       }
     ],
     "headers": [
@@ -18,3 +21,4 @@
       }
     ]
   }
+  
