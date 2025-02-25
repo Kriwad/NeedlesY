@@ -146,7 +146,10 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWEDL_ORIGINS = [
+    "https://needles-y-cme8.vercel.app",
+    "http://localhost:5173/",
+]
 
 
 
